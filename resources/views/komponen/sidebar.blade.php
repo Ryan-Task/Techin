@@ -48,7 +48,7 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-home text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Beranda</span>
@@ -56,7 +56,7 @@
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-wrench text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Servis</span>
@@ -64,7 +64,7 @@
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-tasks text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Check
@@ -84,7 +84,7 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Daftar
@@ -93,7 +93,7 @@
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Pembayaran</span>
@@ -112,7 +112,7 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-chart-line text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Ringkasan</span>
@@ -120,7 +120,7 @@
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
@@ -128,7 +128,7 @@
                     </li>
                     <li>
                         <a href="#"
-                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-user-cog text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Kelola
