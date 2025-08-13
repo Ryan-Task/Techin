@@ -743,6 +743,7 @@
             }, 3000);
         }
     </script>
+    @include('komponen.footer')
 </body>
 
 </html>
