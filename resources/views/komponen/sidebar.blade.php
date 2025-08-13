@@ -46,7 +46,7 @@
                 <ul class="space-y-1">
                     <li>
                         <a href="/beranda"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-home text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Beranda</span>
@@ -54,7 +54,7 @@
                     </li>
                     <li>
                         <a href="/servis"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            class="flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-wrench text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Servis</span>
