@@ -33,6 +33,9 @@
 <body class="bg-gray-50">
     <!-- Include Sidebar Component -->
     @include('komponen.sidebar')
+    
+    
+    
 
 
     <div x-data="{
