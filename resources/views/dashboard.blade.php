@@ -694,6 +694,7 @@
                 <i class="fab fa-whatsapp text-2xl"></i>
             </a>
         </div>
+        @include('komponen.footer')
     </div>
 
     <script>
