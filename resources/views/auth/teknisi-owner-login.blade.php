@@ -14,7 +14,7 @@
         
         <!-- Bagian Kiri (Robot) -->
         <div class="hidden md:flex items-center justify-center bg-gradient-to-br from-cyan-400 to-teal-400 w-1/2 p-8">
-            <img src="/robo.png" alt="Robot Teknisi" class="max-h-[660px]">
+            <img src="/robo.png" alt="Robot Teknisi" class="max-h-[px]">
         </div>
 
         <!-- Bagian Kanan (Form) -->
