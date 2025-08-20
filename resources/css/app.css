@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+/* Custom styles */
+.pagination {
+    @apply flex justify-center mt-4;
+}
+
+.pagination .page-item {
+    @apply mx-1;
+}
+
+.pagination .page-link {
+    @apply px-3 py-1 border rounded;
+}
+
+.pagination .active .page-link {
+    @apply bg-blue-600 text-white border-blue-600;
+}
+
+.pagination .disabled .page-link {
+    @apply opacity-50 cursor-not-allowed;
+}
