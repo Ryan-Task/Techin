@@ -33,9 +33,9 @@
 <body class="bg-gray-50">
     <!-- Include Sidebar Component -->
     @include('komponen.sidebar')
-    
-    
-    
+
+
+
 
 
     <div x-data="{
@@ -744,7 +744,6 @@
             }, 3000);
         }
     </script>
-    @include('komponen.footer')
 </body>
 
 </html>
