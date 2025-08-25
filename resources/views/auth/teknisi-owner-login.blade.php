@@ -11,7 +11,7 @@
 <body class="bg-gradient-to-b from-cyan-500 to-white flex items-center justify-center min-h-screen">
 
     <div class="bg-white rounded-2xl shadow-2xl flex overflow-hidden w-full max-w-6xl mx-4">
-        
+
         <!-- Bagian Kiri (Robot) -->
         <div class="hidden md:flex items-center justify-center bg-gradient-to-br from-cyan-400 to-teal-400 w-1/2 p-8">
             <img src="/robo.png" alt="Robot Teknisi" class="max-h-[px]">
@@ -44,11 +44,10 @@
                             class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 text-lg"
                             placeholder="you@example.com" required>
                         <!-- Ikon Surat -->
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                             class="absolute left-3 top-3 h-6 w-6 text-black"
-                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-3 h-6 w-6 text-black mt-1"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
                         </svg>
                     </div>
                 </div>
@@ -61,19 +60,18 @@
                             class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 text-lg"
                             placeholder="••••••••" required>
                         <!-- Ikon Kunci -->
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                             class="absolute left-3 top-3 h-6 w-6 text-black"
-                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-3 h-6 w-6 text-black"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 11c.667 0 2-.333 2-2V7a2 2 0 10-4 0v2c0 1.667 1.333 2 2 2zm-6 0h12v10H6V11z" />
+                                d="M12 11c.667 0 2-.333 2-2V7a2 2 0 10-4 0v2c0 1.667 1.333 2 2 2zm-6 0h12v10H6V11z" />
                         </svg>
                         <!-- Tombol show/hide -->
                         <button type="button" id="togglePassword"
                             class="absolute right-3 top-3 text-black hover:text-gray-600">
-                            
+
                             <!-- Ikon Mata Terbuka (hidden default) -->
-                            <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -81,14 +79,15 @@
                             </svg>
 
                             <!-- Ikon Mata Tertutup (default visible) -->
-                            <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.97 9.97 0 012.977-4.59M9.88 9.88a3 3 0 104.24 4.24M3 3l18 18" />
                             </svg>
                         </button>
                     </div>
-                    <a href="#" class="text-sm text-cyan-600 hover:underline float-right mt-2">Forgot password?</a>
+                    <a href="#" class="text-sm text-cyan-600 hover:underline float-right mt-2">Forgot
+                        password?</a>
                     <br>
                 </div>
 
@@ -100,7 +99,7 @@
             </form>
         </div>
     </div>
-    
+
 
     <script>
         const toggleBtn = document.getElementById('togglePassword');
@@ -116,4 +115,5 @@
         });
     </script>
 </body>
+
 </html>
