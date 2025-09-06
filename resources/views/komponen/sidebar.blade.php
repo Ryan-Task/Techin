@@ -61,7 +61,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="/check"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-tasks text-lg w-6 text-center text-teal-300"></i>
                             <span
@@ -80,7 +80,7 @@
                 </p>
                 <ul class="space-y-1">
                     <li>
-                        <a href="#"
+                        <a href="/daftarservis"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
                             <span
@@ -89,7 +89,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="pembayaran"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
                             <span
@@ -107,7 +107,7 @@
                 </p>
                 <ul class="space-y-1">
                     <li>
-                        <a href="#"
+                        <a href="/ringkasan"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-chart-line text-lg w-6 text-center text-teal-300"></i>
                             <span
@@ -115,7 +115,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="/riwayat"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
                             <span

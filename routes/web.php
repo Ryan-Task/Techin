@@ -39,3 +39,52 @@ Route::get('/beranda', function () {
 Route::get('/servis', function () {
     return view('page.user.servis');
 });
+
+Route::get('/check', function () {
+    return view('page.user.check');
+});
+
+Route::get('/check_diterima', function () {
+    return view('page.user.check_diterima');
+});
+
+
+Route::get('/check_ditolak', function () {
+    return view('page.user.check_ditolak');
+});
+
+Route::get('/check_belum', function () {
+    return view('page.user.check_belum');
+});
+
+Route::get('/check_diperbaiki', function () {
+    return view('page.user.check_diperbaiki');
+});
+
+
+Route::get('/check_diambil', function () {
+    return view('page.user.check_diambil');
+});
+
+
+Route::get('/check_selesai', function () {
+    return view('page.user.check_selesai');
+});
+
+
+Route::get('/pembayaran', function () {
+    return view('page.teknisi.pembayaran');
+});
+
+Route::get('/riwayat', function () {
+    return view('page.pemilik.riwayat');
+});
+
+Route::get('/ringkasan', function () {
+    return view('page.pemilik.ringkasan');
+});
+
+Route::get('/daftarservis', function () {
+    return view('page.teknisi.daftarservis');
+});
+
