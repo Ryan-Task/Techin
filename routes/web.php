@@ -5,16 +5,12 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\Auth\TeknisiOwnerLoginController;
 use App\Http\Controllers\UserController;
 
+// Route pemilik
 Route::middleware(['auth'])->prefix('pemilik')->group(function () {
     Route::get('/akun', [UserController::class, 'index'])->name('pemilik.akun.index');
     Route::post('/akun', [UserController::class, 'store'])->name('pemilik.akun.store');
-
-    // route lama biarkan
     Route::put('/akun/{id}/access', [UserController::class, 'toggleAccess'])->name('pemilik.akun.toggleAccess');
-
-    // route tambahan agar cocok dengan tombol/JS kamu
     Route::post('/akun/{id}/toggle-access', [UserController::class, 'toggleAccess'])->name('pemilik.akun.toggleAccess.post');
-
     Route::delete('/akun/{id}', [UserController::class, 'destroy'])->name('pemilik.akun.destroy');
 });
 
@@ -27,9 +23,24 @@ Route::get('/service/form', [ServiceController::class, 'create'])->name('service
 Route::post('/service/store', [ServiceController::class, 'store'])->name('service.store');
 Route::get('/service/sukses/{service_id}', [ServiceController::class, 'sukses'])->name('service.sukses');
 
+// Halaman daftar servis (teknisi/owner)
+Route::get('/daftar-servis', [ServiceController::class, 'daftarServis'])
+    ->name('service.daftar')
+    ->middleware('auth');
+
+//Route untuk menghapus secara banyak
+Route::delete('/service/delete/{id}', [ServiceController::class, 'destroy'])->name('service.destroy');
+Route::delete('/service/bulk-delete', [ServiceController::class, 'bulkDelete'])->name('service.bulk-delete');
+
+
+// Route baru untuk update proses & status (menggunakan POST)
+Route::post('/daftar-servis/update', [ServiceController::class, 'updateProsesStatus'])
+    ->name('service.updateProsesStatus')
+    ->middleware('auth');
+
 // Halaman statis
 Route::get('/', function () {
-    return view('welcom'); // mungkin seharusnya 'welcome'
+    return view('welcome'); // pastikan typo diperbaiki
 });
 
 Route::get('/beranda', function () {

@@ -80,7 +80,7 @@
                 </p>
                 <ul class="space-y-1">
                     <li>
-                        <a href="#"
+                        <a href="/daftar-servis"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
                             <span

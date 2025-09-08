@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceRequest extends Model
 {
+    public function user()
+{
+    // Relasi: service request milik satu user (berdasarkan email)
+    return $this->belongsTo(User::class, 'email', 'email');
+}
+
     use HasFactory;
 
     protected $fillable = [
