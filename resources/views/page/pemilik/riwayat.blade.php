@@ -13,7 +13,7 @@
 
   <!-- Wrapper Sidebar + Konten -->
   <div class="flex flex-1">
-    @include('komponen.sidebar')
+    @include('komponen.sidebar')x
 
     <main class="flex-1 flex justify-center items-center p-6">
       <div class="bg-white rounded-xl shadow-md p-6 w-full max-w-5xl">
