@@ -33,7 +33,6 @@
     @include('komponen.sidebar')
 
     <main class="container mx-auto py-6 ">
-
         <!-- Header -->
         <h1 class="text-2xl font-bold mb-6 text-gray-800">Daftar Servis</h1>
 
@@ -51,46 +50,47 @@
 
         <!-- Grid Atas: Card User + Rating + Diagram -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            @foreach ($users as $user)
-                <!-- Card Info + Rating (stack atas-bawah, compact) -->
-                <div class="bg-white shadow rounded-lg p-6 flex flex-col">
-                    <div class="flex items-center justify-between">
-                        <div class="max-w-[75%]">
-                            <p class="font-semibold text-gray-800 text-base truncate">Nama: {{ $user->name }}</p>
-                            <p class="text-sm text-gray-500 truncate">Email: {{ $user->email }}</p>
-                        </div>
-                        <div class="text-blue-500 text-4xl shrink-0">
-                            <i class="fa-regular fa-user-circle"></i>
-                        </div>
+            @php
+                $user = Auth::user();
+            @endphp
+
+            <!-- Card Info + Rating (hanya user login) -->
+            <div class="bg-white shadow rounded-lg p-6 flex flex-col">
+                <div class="flex items-center justify-between">
+                    <div class="max-w-[75%]">
+                        <p class="font-semibold text-gray-800 text-base truncate">Nama: {{ $user->name }}</p>
+                        <p class="text-sm text-gray-500 truncate">Email: {{ $user->email }}</p>
                     </div>
-                    <!-- Rating di bawah info user -->
-                    <div class="mt-4 text-center">
-                        <p class="font-semibold text-gray-800 text-base mb-2">Rata-rata Rating</p>
-                        <div class="flex items-center justify-center space-x-1 mb-2 text-xl">
-                            @php
-                                $filledStars = floor($user->rating);
-                                $halfStar = $user->rating - $filledStars >= 0.5;
-                                $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
-                            @endphp
-
-                            @for ($i = 0; $i < $filledStars; $i++)
-                                <i class="fas fa-star text-yellow-500"></i>
-                            @endfor
-
-                            @if ($halfStar)
-                                <i class="fas fa-star-half-alt text-yellow-500"></i>
-                            @endif
-
-                            @for ($i = 0; $i < $emptyStars; $i++)
-                                <i class="far fa-star text-yellow-500"></i>
-                            @endfor
-                        </div>
-                        <p class="text-lg font-bold text-gray-700">{{ number_format($user->rating, 1) }}/5</p>
+                    <div class="text-blue-500 text-4xl shrink-0">
+                        <i class="fa-regular fa-user-circle"></i>
                     </div>
                 </div>
-            @endforeach
+                <div class="mt-4 text-center">
+                    <p class="font-semibold text-gray-800 text-base mb-2">Rata-rata Rating</p>
+                    <div class="flex items-center justify-center space-x-1 mb-2 text-xl">
+                        @php
+                            $filledStars = floor($user->rating ?? 0);
+                            $halfStar = ($user->rating ?? 0) - $filledStars >= 0.5;
+                            $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
+                        @endphp
 
-            <!-- Diagram Batang -->
+                        @for ($i = 0; $i < $filledStars; $i++)
+                            <i class="fas fa-star text-yellow-500"></i>
+                        @endfor
+
+                        @if ($halfStar)
+                            <i class="fas fa-star-half-alt text-yellow-500"></i>
+                        @endif
+
+                        @for ($i = 0; $i < $emptyStars; $i++)
+                            <i class="far fa-star text-yellow-500"></i>
+                        @endfor
+                    </div>
+                    <p class="text-lg font-bold text-gray-700">{{ number_format($user->rating ?? 0, 1) }}/5</p>
+                </div>
+            </div>
+
+            <!-- Diagram -->
             <div class="bg-white shadow rounded-lg p-6">
                 <h2 class="text-base font-semibold mb-3 text-gray-700">Total Servis Per Hari</h2>
                 <div class="h-48">
@@ -99,7 +99,7 @@
             </div>
         </div>
 
-        <!-- Filter + Search + Bulk Delete Controls -->
+        <!-- Filter + Search -->
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <h2 class="text-lg font-semibold mb-4">Filter & Pencarian</h2>
             <div class="flex flex-col md:flex-row gap-4 mb-4">
@@ -121,32 +121,41 @@
                     <option value="belum">Belum diisi</option>
                 </select>
 
-                <input type="text" id="searchInput" placeholder="Cari nama pelanggan atau ID Servis..."
-                    class="flex-1 border-gray-300 rounded-md shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2" />
-            </div>
-
-            <!-- Tombol Mode Hapus + Tombol Submit Bulk -->
-            <div class="flex gap-2">
-                <button id="toggleDeleteMode"
-                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm">Mode Hapus</button>
-
-                <!-- Tombol submit bulk dikaitkan ke form terpisah lewat atribut 'form' -->
-                <button type="submit" form="bulkDeleteForm"
-                    class="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 text-sm hidden"
-                    id="deleteSelectedBtn">Hapus Terpilih</button>
+                <!-- Input Search -->
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-2 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Cari nama pelanggan atau ID Servis..."
+                        class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 pl-8 pr-3 py-2" />
+                </div>
             </div>
         </div>
 
-        <!-- FORM BULK DELETE TERPISAH (tidak membungkus tabel, menghindari nested forms) -->
+        <!-- FORM BULK DELETE -->
         <form id="bulkDeleteForm" method="POST" action="{{ route('service.bulk-delete') }}">
             @csrf
             @method('DELETE')
-            <!-- Tidak ada input di sini; checkbox di tabel menggunakan form="bulkDeleteForm" -->
         </form>
 
         <!-- Tabel Service Request -->
         <div class="bg-white shadow rounded-lg p-6">
-            <h2 class="text-lg font-semibold mb-4">Daftar Service Request</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Daftar Service Request</h2>
+                <div class="flex gap-2">
+                    <button id="toggleDeleteMode"
+                        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 text-sm flex items-center gap-2">
+                        <i class="fas fa-trash"></i> Mode Hapus
+                    </button>
+
+                    <button type="submit" form="bulkDeleteForm"
+                        class="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 text-sm hidden flex items-center gap-2"
+                        id="deleteSelectedBtn">
+                        <i class="fas fa-trash"></i> Hapus Terpilih
+                    </button>
+                </div>
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm text-left border-collapse">
                     <thead>
@@ -159,6 +168,7 @@
                             <th class="px-4 py-3 border-b">Informasi Barang</th>
                             <th class="px-4 py-3 border-b">Proses</th>
                             <th class="px-4 py-3 border-b">Status</th>
+                            <th class="px-4 py-3 border-b">Ditangani Oleh</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200" id="serviceBody">
@@ -169,7 +179,6 @@
                                 data-proses="{{ $service->proses ?? 'belum' }}"
                                 data-search="{{ strtolower($service->nama_pelanggan . ' ' . $service->service_id) }}">
                                 <td class="px-4 py-3 hidden delete-col">
-                                    <!-- Checkbox dikaitkan ke form bulk lewat atribut form -->
                                     <input type="checkbox" class="delete-checkbox" name="ids[]"
                                         value="{{ $service->id }}" form="bulkDeleteForm">
                                 </td>
@@ -180,10 +189,11 @@
                                     <p class="text-xs text-gray-500">{{ $service->kerusakan }}</p>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <form method="POST" action="{{ route('service.updateProsesStatus') }}">
+                                    <form method="POST" action="{{ route('service.updateProsesStatus') }}"
+                                        id="proses-form-{{ $service->id }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $service->id }}">
-                                        <select name="proses" onchange="this.form.submit()"
+                                        <select name="proses" onchange="checkStatus(this, {{ $service->id }})"
                                             class="w-full border-gray-300 rounded-md shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 px-2 py-2"
                                             {{ $service->status === 'ditolak' ? 'disabled' : '' }}>
                                             <option value="">- Pilih Proses -</option>
@@ -210,6 +220,11 @@
                                         @if ($service->catatan)
                                             <p class="text-xs text-gray-500 mt-1">Catatan: {{ $service->catatan }}</p>
                                         @endif
+                                    @elseif ($service->status === 'diterima')
+                                        <span
+                                            class="px-3 py-2 text-sm font-semibold text-green-600 bg-green-100 rounded">
+                                            Diterima
+                                        </span>
                                     @else
                                         <form method="POST" action="{{ route('service.updateProsesStatus') }}"
                                             id="status-form-{{ $service->id }}">
@@ -231,19 +246,21 @@
                                         </form>
                                     @endif
                                 </td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    {{ $service->handledBy ? $service->handledBy->name : '-' }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-
     </main>
 
     @include('komponen.footer')
 
     <!-- Modal Catatan -->
-    <div id="catatan-modal" class="modal fixed inset-0 bg-transparent justify-center items-center z-50">
+    <div id="catatan-modal" class="modal fixed inset-0 bg-black/50 justify-center items-center z-50">
         <div class="bg-white rounded-lg shadow-lg w-96 p-6">
             <h2 class="text-lg font-semibold mb-4">Masukkan Catatan Penolakan</h2>
             <textarea id="catatan-textarea"
@@ -258,14 +275,49 @@
         </div>
     </div>
 
-    <!-- Script ChartJS + Filter + Delete -->
-    <script>
-        const ctx = document.getElementById('servisChart').getContext('2d');
-        const rawData = @json(
-            $services->map(function ($s) {
-                return \Carbon\Carbon::parse($s->created_at)->format('Y-m-d');
-            }));
+    <!-- Modal Biaya -->
+    <div id="biaya-modal" class="modal fixed inset-0 bg-black/50 justify-center items-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+            <h2 class="text-lg font-semibold mb-4">Masukkan Detail Biaya</h2>
+            <form id="biaya-form" method="POST" action="{{ route('service.updateProsesStatus') }}">
+                @csrf
+                <input type="hidden" name="id" id="biaya-service-id">
+                <input type="hidden" name="proses" value="barang sudah selesai diperbaiki">
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700">Nama Sparepart</label>
+                    <input type="text" name="nama_sparepart" placeholder="Masukkan nama sparepart"
+                        class="w-full border-gray-300 rounded-md px-3 py-2 text-sm" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700">Harga Sparepart</label>
+                    <input type="number" name="harga_sparepart" id="harga_sparepart" placeholder="0"
+                        class="w-full border-gray-300 rounded-md px-3 py-2 text-sm" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700">Harga Jasa</label>
+                    <input type="number" name="harga_jasa" id="harga_jasa" placeholder="0"
+                        class="w-full border-gray-300 rounded-md px-3 py-2 text-sm" required>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700">Total Biaya</label>
+                    <input type="number" name="total_biaya" id="total_biaya" placeholder="Otomatis dihitung"
+                        class="w-full border-gray-300 rounded-md px-3 py-2 text-sm bg-gray-100" readonly>
+                </div>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" onclick="closeBiayaModal()"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Batal</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Script -->
+    <script>
+        // Chart
+        const ctx = document.getElementById('servisChart').getContext('2d');
+        const rawData = @json($services->map(fn($s) => \Carbon\Carbon::parse($s->created_at)->format('Y-m-d')));
         const counts = {};
         rawData.forEach(date => {
             counts[date] = (counts[date] || 0) + 1;
@@ -319,11 +371,15 @@
         let currentServiceId = null;
 
         function checkStatus(select, id) {
-            if (select.value === 'ditolak') {
+            if (select.name === "status" && select.value === 'ditolak') {
                 currentServiceId = id;
                 document.getElementById('catatan-modal').classList.add('active');
+            } else if (select.name === "proses" && select.value === 'barang sudah selesai diperbaiki') {
+                currentServiceId = id;
+                document.getElementById('biaya-service-id').value = id;
+                document.getElementById('biaya-modal').classList.add('active');
             } else {
-                document.getElementById(`status-form-${id}`).submit();
+                select.form.submit();
             }
         }
 
@@ -346,6 +402,32 @@
             closeModal();
         }
 
+        function closeBiayaModal() {
+            document.getElementById('biaya-modal').classList.remove('active');
+            document.getElementById('biaya-form').reset();
+            document.getElementById('total_biaya').value = "";
+            if (currentServiceId) {
+                const select = document.querySelector(`#proses-form-${currentServiceId} select[name="proses"]`);
+                if (select) {
+                    select.value = "barang sedang diperbaiki";
+                }
+            }
+        }
+
+        // Hitung total biaya otomatis
+        const hargaSparepart = document.getElementById("harga_sparepart");
+        const hargaJasa = document.getElementById("harga_jasa");
+        const totalBiaya = document.getElementById("total_biaya");
+
+        function updateTotal() {
+            const sparepart = parseFloat(hargaSparepart.value) || 0;
+            const jasa = parseFloat(hargaJasa.value) || 0;
+            totalBiaya.value = sparepart + jasa;
+        }
+
+        hargaSparepart.addEventListener("input", updateTotal);
+        hargaJasa.addEventListener("input", updateTotal);
+
         // Filter & Search
         const filterStatus = document.getElementById("filterStatus");
         const filterProses = document.getElementById("filterProses");
@@ -356,29 +438,21 @@
             const status = filterStatus.value;
             const proses = filterProses.value;
             const search = searchInput.value.toLowerCase();
-
             rows.forEach(row => {
-                const rowStatus = row.dataset.status;
-                const rowProses = row.dataset.proses;
-                const rowSearch = row.dataset.search;
-
-                const matchStatus = !status || rowStatus === status;
-                const matchProses = !proses || rowProses === proses;
-                const matchSearch = !search || rowSearch.includes(search);
-
+                const matchStatus = !status || row.dataset.status === status;
+                const matchProses = !proses || row.dataset.proses === proses;
+                const matchSearch = !search || row.dataset.search.includes(search);
                 row.style.display = (matchStatus && matchProses && matchSearch) ? "" : "none";
             });
         }
-
         filterStatus.addEventListener("change", applyFilters);
         filterProses.addEventListener("change", applyFilters);
         searchInput.addEventListener("keyup", applyFilters);
 
-        // Mode Hapus (toggle kolom checkbox + tombol submit bulk)
+        // Mode Hapus
         const toggleDeleteMode = document.getElementById("toggleDeleteMode");
         const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
         const deleteCols = document.querySelectorAll(".delete-col");
-
         let deleteMode = false;
         toggleDeleteMode.addEventListener("click", () => {
             deleteMode = !deleteMode;
@@ -386,26 +460,21 @@
             deleteSelectedBtn.classList.toggle("hidden", !deleteMode);
         });
 
-        // Select All untuk checkbox bulk
+        // Select All
         const selectAll = document.getElementById('selectAll');
         if (selectAll) {
-            selectAll.addEventListener('change', function() {
+            selectAll.addEventListener('change', () => {
                 document.querySelectorAll('.delete-checkbox').forEach(cb => cb.checked = selectAll.checked);
             });
         }
 
-        // Validasi submit bulk delete (form method: DELETE via spoofing)
-        const bulkDeleteForm = document.getElementById('bulkDeleteForm');
-        bulkDeleteForm.addEventListener('submit', function(e) {
-            const checked = Array.from(document.querySelectorAll('.delete-checkbox:checked'));
+        // Validasi bulk delete
+        document.getElementById('bulkDeleteForm').addEventListener('submit', function(e) {
+            const checked = document.querySelectorAll('.delete-checkbox:checked');
             if (checked.length === 0) {
                 e.preventDefault();
                 alert('Pilih minimal satu data untuk dihapus!');
-                return;
-            }
-            if (!confirm('Yakin hapus data terpilih?')) {
-                e.preventDefault();
-            }
+            } else if (!confirm('Yakin hapus data terpilih?')) e.preventDefault();
         });
     </script>
 </body>

@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('no_wa')->nullable()->after('email'); // nomor WhatsApp
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['teknisi', 'owner'])->default('teknisi'); 
             $table->boolean('akses')->default(true)->after('role'); 
-            $table->decimal('rating', 2, 1)->default(0); // nilai 0.0 sampai 5.0
-            $table->integer('total_servis')->default(0); 
+            $table->decimal('rating', 2, 1)->default(0);
+            $table->integer('total_servis')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

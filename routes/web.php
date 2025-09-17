@@ -5,6 +5,12 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\Auth\TeknisiOwnerLoginController;
 use App\Http\Controllers\UserController;
 
+
+Route::get('/service/check', [ServiceController::class, 'checkForm'])->name('service.check.form');
+Route::post('/service/check', [ServiceController::class, 'check'])->name('service.check');
+
+
+
 // Route pemilik
 Route::middleware(['auth'])->prefix('pemilik')->group(function () {
     Route::get('/akun', [UserController::class, 'index'])->name('pemilik.akun.index');
@@ -42,6 +48,8 @@ Route::post('/daftar-servis/update', [ServiceController::class, 'updateProsesSta
 Route::get('/', function () {
     return view('welcome'); // pastikan typo diperbaiki
 });
+
+
 
 Route::get('/beranda', function () {
     return view('dashboard');

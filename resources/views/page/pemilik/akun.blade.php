@@ -182,7 +182,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col"
-                                        class="px-6 py极3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         No</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -190,6 +190,9 @@
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Email</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        No WA</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Role</th>
@@ -208,8 +211,11 @@
                                             {{ $users->firstItem() + $index }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {{ $user->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text极m text-gray-500">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $user->email }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $user->no_wa }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
@@ -273,6 +279,13 @@
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="email" name="email" type="email" placeholder="Email" required
                                 x-model="formData.email">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="no_wa">No WA</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="no_wa" name="no_wa" type="text" placeholder="Nomor WhatsApp" required
+                                x-model="formData.no_wa">
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
@@ -402,6 +415,7 @@
                 formData: {
                     name: '',
                     email: '',
+                    no_wa: '',
                     password: '',
                     role: ''
                 },
@@ -494,6 +508,7 @@
                     this.formData = {
                         name: '',
                         email: '',
+                        no_wa: '',
                         password: '',
                         role: ''
                     };
