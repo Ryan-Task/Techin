@@ -10,32 +10,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-        .toggle-container {
-            width: 42px;
-            height: 22px;
+        /* Style untuk tombol akses yang baru */
+        .access-btn {
+            padding: 0.35rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
-        .toggle-label {
-            background-color: #d1d5db;
-            transition: background-color 0.3s ease;
+        .access-btn.active {
+            background-color: #10B981;
+            color: white;
         }
 
-        .toggle-checkbox:checked+.toggle-label {
-            background-color: #2563eb;
+        .access-btn.active:hover {
+            background-color: #059669;
         }
 
-        .toggle-checkbox {
-            top: -2px;
-            left: -2px;
-            width: 26px;
-            height: 26px;
-            border: 2px solid #fff;
-            background-color: white;
-            transition: transform 0.3s ease;
+        .access-btn.inactive {
+            background-color: #EF4444;
+            color: white;
         }
 
-        .toggle-checkbox:checked {
-            transform: translateX(20px);
+        .access-btn.inactive:hover {
+            background-color: #DC2626;
+        }
+
+        .access-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Status text dengan lebar tetap */
+        .status-text {
+            width: 70px;
+            display: inline-block;
         }
 
         [x-cloak] {
@@ -70,11 +82,6 @@
             100% {
                 transform: rotate(360deg);
             }
-        }
-
-        .toggle-container.disabled {
-            opacity: 0.6;
-            pointer-events: none;
         }
 
         /* Layout improvements */
@@ -163,7 +170,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
-                                        d="M8 4a4 4 0 100 8 4 4 0 000-极8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
@@ -181,8 +188,11 @@
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Nama</th>
                                     <th scope="col"
-                                        class="px-6极 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Email</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        No WA</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Role</th>
@@ -204,6 +214,9 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $user->email }}
                                         </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $user->no_wa }}
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->role == 'owner' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
@@ -212,17 +225,13 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
-                                                <div
-                                                    class="toggle-container relative inline-block w-10 mr-2 align-middle select-none">
-                                                    <input type="checkbox" id="toggle-{{ $user->id }}"
-                                                        @click="confirmToggleAccess($event, {{ $user->id }}, '{{ $user->name }}', {{ $user->akses ? 'true' : 'false' }})"
-                                                        {{ $user->akses ? 'checked' : '' }}
-                                                        class="toggle-checkbox absolute block rounded-full appearance-none cursor-pointer" />
-                                                    <label for="toggle-{{ $user->id }}"
-                                                        class="toggle-label block overflow-hidden h-6 rounded-full cursor-pointer"></label>
-                                                </div>
-                                                <span
-                                                    class="text-sm text-gray-600">{{ $user->akses ? 'Aktif' : 'Nonaktif' }}</span>
+                                                <button :disabled="loadingUserId === {{ $user->id }}"
+                                                    @click="confirmToggleAccess({{ $user->id }}, '{{ $user->name }}', {{ $user->akses ? 'true' : 'false' }})"
+                                                    class="access-btn {{ $user->akses ? 'active' : 'inactive' }}"
+                                                    x-text="{{ $user->akses ? "'Nonaktifkan'" : "'Aktifkan'" }}"></button>
+                                                <span class="text-sm text-gray-600 status-text ml-2">
+                                                    {{ $user->akses ? 'Aktif' : 'Nonaktif' }}
+                                                </span>
                                                 <span x-show="loadingUserId === {{ $user->id }}"
                                                     class="spinner"></span>
                                             </div>
@@ -233,7 +242,7 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
                                                     viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd"
-                                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 极0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
                                                         clip-rule="evenodd" />
                                                 </svg>
                                             </button>
@@ -272,16 +281,23 @@
                                 x-model="formData.email">
                         </div>
                         <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="no_wa">No WA</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="no_wa" name="no_wa" type="text" placeholder="Nomor WhatsApp" required
+                                x-model="formData.no_wa">
+                        </div>
+                        <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
                             <input
-                                class="shadow appearance-none border rounded w-full极 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="password" name="password" type="password" placeholder="Password" required
                                 minlength="6" x-model="formData.password">
                         </div>
                         <div class="mb-6">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Role</label>
                             <select
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none极 focus:shadow-outline"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="role" name="role" required x-model="formData.role">
                                 <option value="">Pilih Role</option>
                                 <option value="teknisi">Teknisi</option>
@@ -309,7 +325,7 @@
                                 <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 极L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                             </div>
                             <div class="ml-4">
@@ -345,7 +361,7 @@
                                 <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v极6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </div>
                             <div class="ml-4">
@@ -359,7 +375,7 @@
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end space-x-3">
-                            <button type="button" @click="cancelToggleAccess"
+                            <button type="button极 @click="cancelToggleAccess"
                                 class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Batal</button>
                             <button @click="toggleAccessConfirmed"
                                 class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ya,
@@ -389,8 +405,7 @@
                     userId: null,
                     userName: '',
                     currentAccess: false,
-                    newAccess: false,
-                    checkboxElement: null // Menyimpan referensi checkbox
+                    newAccess: false
                 },
                 notification: {
                     show: false,
@@ -400,6 +415,7 @@
                 formData: {
                     name: '',
                     email: '',
+                    no_wa: '',
                     password: '',
                     role: ''
                 },
@@ -413,32 +429,34 @@
                     }, 5000);
                 },
 
-                confirmToggleAccess(event, userId, userName, currentAccess) {
-                    // Mencegah perubahan visual toggle
-                    event.preventDefault();
-
-                    // Simpan referensi checkbox
-                    const checkbox = document.getElementById(`toggle-${userId}`);
+                confirmToggleAccess(userId, userName, currentAccess) {
+                    // Pastikan userId valid
+                    if (!userId || userId === 'undefined') {
+                        this.showNotification('error', 'User ID tidak valid');
+                        return;
+                    }
 
                     this.toggleData = {
-                        userId,
+                        userId: parseInt(userId), // Pastikan berupa integer
                         userName,
-                        currentAccess,
-                        newAccess: !currentAccess,
-                        checkboxElement: checkbox
+                        currentAccess: Boolean(currentAccess),
+                        newAccess: !currentAccess
                     };
                     this.showToggleModal = true;
                 },
 
                 cancelToggleAccess() {
-                    // Kembalikan toggle ke state semula
-                    if (this.toggleData.checkboxElement) {
-                        this.toggleData.checkboxElement.checked = this.toggleData.currentAccess;
-                    }
                     this.showToggleModal = false;
                 },
 
                 async toggleAccessConfirmed() {
+                    // Validasi userId sebelum mengirim request
+                    if (!this.toggleData.userId || isNaN(this.toggleData.userId)) {
+                        this.showNotification('error', 'User ID tidak valid');
+                        this.showToggleModal = false;
+                        return;
+                    }
+
                     this.showToggleModal = false;
                     this.loadingUserId = this.toggleData.userId;
 
@@ -460,19 +478,13 @@
 
                         this.showNotification('success', data.message || 'Status akses berhasil diubah');
 
-                        // Update teks status
-                        const statusText = document.querySelector(`#toggle-${this.toggleData.userId}`).closest('td')
-                            .querySelector('.text-sm.text-gray-600');
-                        if (statusText) statusText.textContent = this.toggleData.newAccess ? 'Aktif' : 'Nonaktif';
+                        // Reload halaman untuk memperbarui tampilan
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
 
                     } catch (error) {
                         console.error('Error:', error);
-
-                        // Jika gagal, kembalikan toggle ke state semula
-                        if (this.toggleData.checkboxElement) {
-                            this.toggleData.checkboxElement.checked = this.toggleData.currentAccess;
-                        }
-
                         this.showNotification('error', error.message || 'Terjadi kesalahan. Silakan coba lagi.');
                     } finally {
                         this.loadingUserId = null;
@@ -480,6 +492,12 @@
                 },
 
                 confirmDelete(id, name) {
+                    // Validasi ID sebelum menampilkan modal
+                    if (!id || id === 'undefined') {
+                        this.showNotification('error', 'User ID tidak valid');
+                        return;
+                    }
+
                     this.deleteId = id;
                     this.deleteName = name;
                     this.deleteUrl = `/pemilik/akun/${id}`;
@@ -490,6 +508,7 @@
                     this.formData = {
                         name: '',
                         email: '',
+                        no_wa: '',
                         password: '',
                         role: ''
                     };

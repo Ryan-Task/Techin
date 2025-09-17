@@ -9,6 +9,12 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function serviceRequests()
+{
+    // Relasi: satu user punya banyak service request (berdasarkan email)
+    return $this->hasMany(ServiceRequest::class, 'email', 'email');
+}
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -20,6 +26,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'no_wa',
+        'rating',
         'password',
         'role',
         'akses'

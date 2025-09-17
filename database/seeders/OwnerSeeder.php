@@ -13,6 +13,7 @@ class OwnerSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'owner@usaha.com'],
             [
+                'no_wa' => '089523419590',
                 'name' => 'Owner Usaha',
                 'password' => Hash::make('password123'),
                 'role' => 'owner'

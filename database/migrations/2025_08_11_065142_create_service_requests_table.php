@@ -9,22 +9,29 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
-{
-    Schema::create('service_requests', function (Blueprint $table) {
-        $table->id();
-        $table->string('service_id')->unique();
-        $table->string('nama_pelanggan');
-        $table->string('no_wa');
-        $table->string('email')->nullable();
-        $table->enum('jenis_barang', ['HP', 'Laptop', 'PC', 'Tablet', 'TV', 'Lainnya']);
-        $table->string('nama_barang');
-        $table->text('kerusakan');
-        $table->timestamps();
-    });
-}
-
-
+    public function up(): void
+    {
+        Schema::create('service_requests', function (Blueprint $table) {
+            $table->id();
+            $table->string('service_id')->unique();
+            $table->string('nama_pelanggan');
+            $table->string('no_wa');
+            $table->string('email')->nullable();
+            $table->enum('jenis_barang', ['HP', 'Laptop', 'PC', 'Tablet', 'TV', 'Lainnya']);
+            $table->string('nama_barang');
+            $table->text('kerusakan');
+            $table->decimal('biaya', 12, 2)->nullable();
+            $table->text('catatan')->nullable();
+            $table->enum('proses', [
+                'barang diterima',
+                'barang sedang diperbaiki',
+                'barang sudah selesai diperbaiki',
+                'barang sudah selesai dan terbayar'
+            ])->nullable();
+            $table->enum('status', ['ditolak', 'diterima'])->nullable();
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
