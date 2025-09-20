@@ -4,6 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\Auth\TeknisiOwnerLoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PembayaranController;
+
+Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.form');
+Route::post('/pembayaran/check', [PembayaranController::class, 'check'])->name('pembayaran.check');
+
+
+
 
 
 Route::get('/service/check', [ServiceController::class, 'checkForm'])->name('service.check.form');
