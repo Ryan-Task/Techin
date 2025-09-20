@@ -491,109 +491,106 @@
                     </div>
 
                     <div class="grid md:grid-cols-3 gap-8">
-                        <!-- Tata Cara Servis -->
-                        <div
-                            class="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-500 to-teal-600">
-                            </div>
-                            <div class="p-8">
-                                <div class="relative mb-6">
-                                    <div
-                                        class="w-20 h-20 bg-gradient-to-br from-teal-400 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                                        <i class="fas fa-clipboard-list text-3xl text-white"></i>
-                                    </div>
-                                    <div
-                                        class="absolute -top-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-star text-white text-sm"></i>
-                                    </div>
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Tata Cara Servis</h3>
-                                <p class="text-gray-600 text-center mb-6 text-sm">Panduan lengkap prosedur servis di
-                                    Techin dari awal hingga selesai</p>
-                                <div class="space-y-2 mb-6">
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-file-pdf text-red-500 mr-2"></i>Format PDF
-                                    </div>
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-download mr-2"></i>2.3 MB
-                                    </div>
-                                </div>
-                                <button onclick="downloadFile('tata-cara-servis-techin.pdf')"
-                                    class="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
-                                    <i class="fas fa-download mr-2"></i>Download Panduan
-                                </button>
-                            </div>
-                        </div>
 
-                        <!-- Syarat & Ketentuan -->
-                        <div
-                            class="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-blue-600">
-                            </div>
-                            <div class="p-8">
-                                <div class="relative mb-6">
-                                    <div
-                                        class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                                        <i class="fas fa-gavel text-3xl text-white"></i>
-                                    </div>
-                                    <div
-                                        class="absolute -top-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-exclamation text-white text-sm"></i>
-                                    </div>
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Syarat & Ketentuan</h3>
-                                <p class="text-gray-600 text-center mb-6 text-sm">Ketentuan layanan, garansi, dan
-                                    kebijakan yang berlaku di Techin</p>
-                                <div class="space-y-2 mb-6">
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-file-pdf text-red-500 mr-2"></i>Format PDF
-                                    </div>
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-download mr-2"></i>1.8 MB
-                                    </div>
-                                </div>
-                                <button onclick="downloadFile('syarat-ketentuan-techin.pdf')"
-                                    class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
-                                    <i class="fas fa-download mr-2"></i>Download S&K
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Brosur Layanan -->
-                        <div
-                            class="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                     <!-- Tata Cara Servis -->
+                    <div
+                    class="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-teal-500 to-teal-600"></div>
+                    <div class="p-8">
+                        <div class="relative mb-6">
                             <div
-                                class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-purple-600">
+                                class="w-20 h-20 bg-gradient-to-br from-teal-400 to-teal-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                                <i class="fas fa-clipboard-list text-3xl text-white"></i>
                             </div>
-                            <div class="p-8">
-                                <div class="relative mb-6">
-                                    <div
-                                        class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                                        <i class="fas fa-braille text-3xl text-white"></i>
-                                    </div>
-                                    <div
-                                        class="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-sparkles text-white text-sm"></i>
-                                    </div>
-                                </div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Brosur Layanan</h3>
-                                <p class="text-gray-600 text-center mb-6 text-sm">Katalog lengkap semua layanan dan
-                                    paket perbaikan yang tersedia</p>
-                                <div class="space-y-2 mb-6">
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-file-pdf text-red-500 mr-2"></i>Format PDF
-                                    </div>
-                                    <div class="flex items-center text-xs text-gray-500">
-                                        <i class="fas fa-download mr-2"></i>4.1 MB
-                                    </div>
-                                </div>
-                                <button onclick="downloadFile('brosur-layanan-techin.pdf')"
-                                    class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
-                                    <i class="fas fa-download mr-2"></i>Download Brosur
-                                </button>
+                            <div
+                                class="absolute -top-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-star text-white text-sm"></i>
                             </div>
                         </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Tata Cara Servis</h3>
+                        <p class="text-gray-600 text-center mb-6 text-sm">Panduan lengkap prosedur servis di
+                            Techin dari awal hingga selesai</p>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-file-pdf text-red-500 mr-2"></i>Format PDF
+                            </div>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-download mr-2"></i>2.3 MB
+                            </div>
+                        </div>
+                        <a href="{{ asset('dokumen/tata-cara-servis-techin.pdf') }}" download
+                        class="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
+                        <i class="fas fa-download mr-2"></i>Download Panduan
+                        </a>
                     </div>
+                </div>
+
+                <!-- Syarat & Ketentuan -->
+                <div
+                    class="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+                    <div class="p-8">
+                        <div class="relative mb-6">
+                            <div
+                                class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                                <i class="fas fa-gavel text-3xl text-white"></i>
+                            </div>
+                            <div
+                                class="absolute -top-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation text-white text-sm"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Syarat & Ketentuan</h3>
+                        <p class="text-gray-600 text-center mb-6 text-sm">Ketentuan layanan, garansi, dan
+                            kebijakan yang berlaku di Techin</p>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-file-pdf text-red-500 mr-2"></i>Format PDF
+                            </div>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-download mr-2"></i>1.8 MB
+                            </div>
+                        </div>
+                        <a href="{{ asset('dokumen/syarat-ketentuan-techin.pdf') }}" download
+                        class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
+                        <i class="fas fa-download mr-2"></i>Download S&K
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Brosur Layanan -->
+                <div
+                    class="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-purple-600"></div>
+                    <div class="p-8">
+                        <div class="relative mb-6">
+                            <div
+                                class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                                <i class="fas fa-braille text-3xl text-white"></i>
+                            </div>
+                            <div
+                                class="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-sparkles text-white text-sm"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-3 text-center">Brosur Layanan</h3>
+                        <p class="text-gray-600 text-center mb-6 text-sm">Katalog lengkap semua layanan dan
+                            paket perbaikan yang tersedia</p>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-file-pdf text-red-500 mr-2"></i>Format PDF
+                            </div>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="fas fa-download mr-2"></i>4.1 MB
+                            </div>
+                        </div>
+                        <a href="{{ asset('dokumen/brosur-layanan-techin.pdf') }}" download
+                        class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
+                        <i class="fas fa-download mr-2"></i>Download Brosur
+                        </a>
+                    </div>
+                </div>
+            </div>
 
                     <!-- Additional Info -->
                     <div class="mt-12 text-center">
@@ -689,6 +686,7 @@
                 </div>
             </section>
         </main>
+        
 
         <!-- Floating WhatsApp Button -->
         <div class="fixed bottom-6 left-6 z-40">
