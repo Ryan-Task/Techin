@@ -129,6 +129,37 @@
                 height: 14rem;
             }
         }
+
+        /* Modal Konfirmasi */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .confirmation-input {
+            width: 100%;
+            padding: 8px 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -307,9 +338,18 @@
                         @php
                             $currentPage = request()->get('page', 1);
                             $perPage = 10;
+
+                            // Urutkan data: diterima -> belum -> ditolak
                             $servicesCollection = $services->sortBy(function ($s) {
-                                return $s->status === 'ditolak' ? 1 : 0;
+                                if ($s->status === 'diterima') {
+                                    return 1;
+                                }
+                                if ($s->status === 'ditolak') {
+                                    return 3;
+                                }
+                                return 2; // belum diisi
                             });
+
                             $paginatedServices = $servicesCollection->forPage($currentPage, $perPage);
                             $totalPages = ceil($servicesCollection->count() / $perPage);
                         @endphp
@@ -335,7 +375,8 @@
                                         id="proses-form-{{ $service->id }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $service->id }}">
-                                        <select name="proses" onchange="checkStatus(this, {{ $service->id }})"
+                                        <select name="proses"
+                                            onchange="checkProsesStatus(this, {{ $service->id }})"
                                             class="w-full border-gray-300 rounded-lg shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500 px-2 py-2"
                                             {{ $service->status === 'ditolak' ? 'disabled' : '' }}>
                                             <option value="">- Pilih Proses -</option>
@@ -490,6 +531,22 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Selesai & Terbayar -->
+    <div id="konfirmasi-modal" class="confirmation-modal">
+        <div class="confirmation-modal-content">
+            <h2 class="text-lg font-semibold mb-4 text-gray-800">Konfirmasi Penyelesaian</h2>
+            <p class="mb-3">Apakah Anda yakin ingin menyelesaikan dan menandai servis sebagai terbayar?</p>
+            <p class="mb-3 text-sm text-gray-600">Ketik <strong>"YA"</strong> untuk mengonfirmasi:</p>
+            <input type="text" id="konfirmasi-input" class="confirmation-input" placeholder="Ketik YA di sini">
+            <div class="mt-4 flex justify-end gap-2">
+                <button onclick="closeKonfirmasiModal()"
+                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">Batal</button>
+                <button onclick="submitKonfirmasi()"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script -->
     <script>
         // Chart
@@ -518,7 +575,7 @@
                     label: 'Jumlah Servis',
                     data: Object.values(counts),
                     borderWidth: 1,
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    backgroundColor: 'rg59, 130, 246, 0.8)',
                     borderRadius: 4,
                     barPercentage: 0.6,
                     categoryPercentage: 0.8
@@ -539,7 +596,6 @@
                 scales: {
                     x: {
                         ticks: {
-                            // Perbaikan: Mengatur kemiringan teks menjadi 0 derajat (lurus)
                             maxRotation: 0,
                             minRotation: 0,
                             font: {
@@ -575,12 +631,52 @@
         });
 
         let currentServiceId = null;
+        let currentProsesSelect = null;
+        let previousProsesValue = null;
+
+        // Urutan proses yang valid
+        const prosesOrder = {
+            '': 0,
+            'barang diterima': 1,
+            'barang sedang diperbaiki': 2,
+            'barang sudah selesai diperbaiki': 3,
+            'barang sudah selesai dan terbayar': 4
+        };
 
         function checkStatus(select, id) {
-            if (select.name === "status" && select.value === 'ditolak') {
+            if (select.value === 'ditolak') {
                 currentServiceId = id;
                 document.getElementById('catatan-modal').classList.remove('hidden');
-            } else if (select.name === "proses" && select.value === 'barang sudah selesai diperbaiki') {
+            } else if (select.value === 'diterima') {
+                select.form.submit();
+            }
+        }
+
+        function checkProsesStatus(select, id) {
+            const selectedValue = select.value;
+            const previousValue = select.getAttribute('data-previous') || '';
+
+            // Simpan nilai sebelumnya untuk referensi
+            select.setAttribute('data-previous', selectedValue);
+
+            // Jika memilih proses "Selesai & Terbayar", tampilkan konfirmasi
+            if (selectedValue === 'barang sudah selesai dan terbayar') {
+                currentServiceId = id;
+                currentProsesSelect = select;
+                previousProsesValue = select.getAttribute('data-previous') || '';
+                document.getElementById('konfirmasi-modal').style.display = 'flex';
+                return;
+            }
+
+            // Validasi urutan proses
+            if (!validateProsesOrder(previousValue, selectedValue)) {
+                showNotification('Tidak dapat melompati proses. Silakan ikuti urutan yang benar.', 'error');
+                select.value = previousValue;
+                return;
+            }
+
+            // Jika memilih proses "Selesai Diperbaiki", tampilkan modal biaya
+            if (selectedValue === 'barang sudah selesai diperbaiki') {
                 currentServiceId = id;
                 document.getElementById('biaya-service-id').value = id;
                 document.getElementById('biaya-modal').classList.remove('hidden');
@@ -589,11 +685,22 @@
             }
         }
 
+        function validateProsesOrder(previous, next) {
+            // Jika sebelumnya kosong atau sama, valid
+            if (!previous || previous === next) return true;
+
+            // Jika next adalah proses awal, valid
+            if (next === 'barang diterima') return true;
+
+            // Validasi urutan
+            return prosesOrder[next] === prosesOrder[previous] + 1;
+        }
+
         function closeModal() {
             document.getElementById('catatan-modal').classList.add('hidden');
             document.getElementById('catatan-textarea').value = '';
             if (currentServiceId) {
-                document.getElementById(`status-select-${currentServiceId}`).value = 'diterima';
+                document.getElementById(`status-select-${currentServiceId}`).value = '';
             }
         }
 
@@ -615,8 +722,33 @@
             if (currentServiceId) {
                 const select = document.querySelector(`#proses-form-${currentServiceId} select[name="proses"]`);
                 if (select) {
-                    select.value = "barang sedang diperbaiki";
+                    // Kembalikan ke nilai sebelumnya
+                    select.value = select.getAttribute('data-previous') || '';
                 }
+            }
+        }
+
+        function showKonfirmasiModal() {
+            document.getElementById('konfirmasi-modal').style.display = 'flex';
+        }
+
+        function closeKonfirmasiModal() {
+            document.getElementById('konfirmasi-modal').style.display = 'none';
+            document.getElementById('konfirmasi-input').value = '';
+            if (currentProsesSelect) {
+                // Kembalikan ke nilai sebelumnya
+                currentProsesSelect.value = previousProsesValue;
+            }
+        }
+
+        function submitKonfirmasi() {
+            const input = document.getElementById('konfirmasi-input').value;
+            if (input.toUpperCase() === 'YA') {
+                // Submit form proses
+                document.getElementById(`proses-form-${currentServiceId}`).submit();
+                closeKonfirmasiModal();
+            } else {
+                showNotification('Konfirmasi gagal. Silakan ketik "YA" untuk melanjutkan.', 'error');
             }
         }
 
@@ -648,9 +780,23 @@
             const search = searchInput.value.toLowerCase();
 
             rows.forEach(row => {
-                const matchStatus = !status || row.dataset.status === status;
-                const matchProses = !proses || row.dataset.proses === proses;
-                const matchSearch = !search || row.dataset.search.includes(search);
+                const rowStatus = row.dataset.status;
+                const rowProses = row.dataset.proses;
+                const rowSearch = row.dataset.search;
+
+                // Perbaikan: Handle status "ditolak" dengan benar
+                const matchStatus = !status ||
+                    (status === 'ditolak' && rowStatus === 'ditolak') ||
+                    (status === 'diterima' && rowStatus === 'diterima') ||
+                    (status === 'belum' && (rowStatus === '' || rowStatus === 'belum'));
+
+                // Perbaikan: Handle proses dengan benar
+                const matchProses = !proses ||
+                    (proses === 'belum' && (rowProses === '' || rowProses === 'belum')) ||
+                    (proses !== 'belum' && rowProses === proses);
+
+                const matchSearch = !search || rowSearch.includes(search);
+
                 row.style.display = (matchStatus && matchProses && matchSearch) ? "" : "none";
             });
         }
@@ -745,6 +891,14 @@
             if (errorMessage) {
                 showNotification(errorMessage.getAttribute('data-message'), 'error');
             }
+
+            // Inisialisasi nilai sebelumnya untuk semua select proses
+            document.querySelectorAll('select[name="proses"]').forEach(select => {
+                select.setAttribute('data-previous', select.value);
+            });
+
+            // Inisialisasi filter
+            applyFilters();
         });
     </script>
 </body>

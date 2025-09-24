@@ -10,18 +10,21 @@ class ServiceRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'service_id',
-        'nama_pelanggan',
-        'no_wa',
-        'email',
-        'jenis_barang',
-        'nama_barang',
-        'kerusakan',
-        'proses',
-        'status',
-        'catatan',
-        'handled_by',
-    ];
+    'service_id',
+    'nama_pelanggan',
+    'no_wa',
+    'email',
+    'jenis_barang',
+    'nama_barang',
+    'kerusakan',
+    'proses',
+    'status',
+    'catatan',
+    'handled_by',
+    'rating',
+    'ulasan',
+];
+
 
     // Relasi ke detail biaya
     public function detail()

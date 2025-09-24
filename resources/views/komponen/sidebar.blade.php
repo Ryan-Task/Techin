@@ -89,11 +89,19 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="/check-pembayaran"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Pembayaran</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/history"
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
+                            <span
+                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
                         </a>
                     </li>
                 </ul>
@@ -115,7 +123,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
+                        <a href="riwayat-owner"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
                             <span

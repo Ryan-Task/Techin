@@ -7,6 +7,7 @@ use App\Models\ServiceRequest;
 use App\Models\ServiceDetail;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ServiceController extends Controller
 {
@@ -104,7 +105,7 @@ class ServiceController extends Controller
         $service->status  = in_array($request->status, $validStatus) ? $request->status : $service->status;
         $service->catatan = $request->catatan ?? $service->catatan;
 
-        // ====== Tambahkan: simpan id user yang update status ======
+        // ====== Simpan id user yang update status ======
         if ($request->status) {
             $service->handled_by = Auth::id();
         }
@@ -112,15 +113,16 @@ class ServiceController extends Controller
         $service->save();
 
         // ====== Simpan detail biaya ======
-        if ($request->filled('harga_sparepart') || $request->filled('harga_jasa')) {
+        if ($request->filled('harga_sparepart') || $request->filled('harga_jasa') || $request->filled('nama_sparepart')) {
             $total = ($request->harga_sparepart ?? 0) + ($request->harga_jasa ?? 0);
 
+            // Pastikan kolom relasinya sesuai: kita menyimpan/lookup berdasarkan service_id string
             ServiceDetail::updateOrCreate(
-                ['service_id' => $service->service_id], // relasi ke tabel detail
+                ['service_id' => $service->service_id],
                 [
                     'nama_sparepart'  => $request->nama_sparepart,
-                    'harga_sparepart' => $request->harga_sparepart,
-                    'harga_jasa'      => $request->harga_jasa,
+                    'harga_sparepart' => $request->harga_sparepart ?? 0,
+                    'harga_jasa'      => $request->harga_jasa ?? 0,
                     'total_biaya'     => $total,
                 ]
             );
@@ -189,5 +191,236 @@ class ServiceController extends Controller
 
         return view('page.user.check_result', compact('service', 'detail'));
     }
+
+    // ==================================================
+    // Beri rating ke teknisi
+    // ==================================================
+   public function giveRating(Request $request, $id)
+{
+    $request->validate([
+        'rating' => 'required|integer|min:1|max:5',
+        'ulasan' => 'nullable|string|max:1000',
+    ]);
+
+    // Ambil servis
+    $service = ServiceRequest::findOrFail($id);
+
+    // Simpan rating dan ulasan di service_requests
+    $service->rating = $request->rating;
+    $service->ulasan = $request->ulasan;
+    $service->save();
+
+    // Opsional: update rating rata-rata teknisi di tabel users
+    if ($service->handled_by) {
+        $teknisi = User::find($service->handled_by);
+        if ($teknisi) {
+            $totalServis = ServiceRequest::where('handled_by', $teknisi->id)
+                ->whereNotNull('rating')
+                ->count();
+            $avgRating = ServiceRequest::where('handled_by', $teknisi->id)
+                ->whereNotNull('rating')
+                ->avg('rating');
+            $teknisi->rating = $avgRating;
+            $teknisi->total_servis = $totalServis;
+            $teknisi->save();
+        }
+    }
+
+    return redirect()->back()->with('success', 'Terima kasih, rating berhasil dikirim!');
+}
+
+
+    // ==================================================
+    // History servis sesuai teknisi login
+    // ==================================================
+  public function history()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // Ambil servis yang sudah selesai & dibayar (status diterima) + servis yang ditolak
+        $services = DB::table('service_requests as sr')
+            ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+            ->where('sr.handled_by', $user->id)
+            ->where(function ($query) {
+                $query->where(function ($q) {
+                    $q->where('sr.status', 'diterima')
+                      ->where('sr.proses', 'barang sudah selesai dan terbayar');
+                })
+                ->orWhere('sr.status', 'ditolak');
+            })
+            ->orderBy('sr.updated_at', 'desc')
+            ->select(
+                'sr.*',
+                'sd.harga_jasa',
+                'sd.harga_sparepart',
+                'sd.total_biaya'
+            )
+            ->paginate(10);
+
+        // Hitung total pendapatan dari servis diterima & selesai dibayar
+        $totalPendapatan = DB::table('service_requests as sr')
+            ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+            ->where('sr.handled_by', $user->id)
+            ->where('sr.status', 'diterima')
+            ->where('sr.proses', 'barang sudah selesai dan terbayar')
+            ->sum('sd.total_biaya');
+
+        // Pendapatan per bulan (hanya servis diterima & selesai dibayar)
+        $incomePerMonth = DB::table('service_requests as sr')
+    ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+    ->where('sr.handled_by', $user->id)
+    ->where('sr.proses', 'barang sudah selesai dan terbayar')
+    ->where('sr.status', 'diterima')
+    ->selectRaw("
+        EXTRACT(MONTH FROM sr.updated_at) as month,
+        EXTRACT(YEAR FROM sr.updated_at) as year,
+        SUM(sd.total_biaya) as total
+    ")
+    ->groupByRaw("EXTRACT(YEAR FROM sr.updated_at), EXTRACT(MONTH FROM sr.updated_at)")
+    ->orderByRaw("EXTRACT(YEAR FROM sr.updated_at), EXTRACT(MONTH FROM sr.updated_at)")
+    ->get();
+
+
+        $grandTotal = $incomePerMonth->sum('total');
+
+        // Hitung total servis diterima & selesai dibayar
+        $totalDiterima = DB::table('service_requests')
+            ->where('handled_by', $user->id)
+            ->where('status', 'diterima')
+            ->where('proses', 'barang sudah selesai dan terbayar')
+            ->count();
+
+        // Hitung total servis ditolak
+        $totalDitolak = DB::table('service_requests')
+            ->where('handled_by', $user->id)
+            ->where('status', 'ditolak')
+            ->count();
+
+        return view('page.teknisi.history', compact(
+            'services',
+            'incomePerMonth',
+            'grandTotal',
+            'totalPendapatan',
+            'totalDiterima',
+            'totalDitolak'
+        ));
+    }
+// ==================================================
+// History servis khusus untuk Owner
+// ==================================================
+public function historyOwner(Request $request)
+{
+    $user = Auth::user();
+    if (! $user) {
+        return redirect()->route('login');
+    }
+
+    // Pastikan hanya role owner yang bisa akses
+    if ($user->role !== 'owner') {
+        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+    }
+
+    // Inisialisasi agar variabel selalu ada
+    $selesai = collect();
+    $tidakSelesai = collect();
+    $incomePerMonth = collect();
+    $users = collect(); // daftar teknisi untuk filter
+
+    // daftar teknisi
+    $users = User::where('role', 'teknisi')->get();
+
+    $querySelesai = ServiceRequest::with(['detail', 'handledBy'])
+        ->where('status', 'diterima')
+        ->where('proses', 'barang sudah selesai dan terbayar');
+
+    $queryTidak = ServiceRequest::with(['detail', 'handledBy'])
+        ->where('status', 'ditolak');
+
+    // cek filter teknisi
+    if ($request->filled('teknisi_id')) {
+        $querySelesai->where('handled_by', $request->teknisi_id);
+        $queryTidak->where('handled_by', $request->teknisi_id);
+    }
+
+    $selesai = $querySelesai->orderBy('updated_at', 'desc')->get();
+    $tidakSelesai = $queryTidak->orderBy('updated_at', 'desc')->get();
+
+    $incomeQuery = DB::table('service_requests as sr')
+        ->leftJoin('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+        ->where('sr.status', 'diterima')
+        ->where('sr.proses', 'barang sudah selesai dan terbayar');
+
+    if ($request->filled('teknisi_id')) {
+        $incomeQuery->where('sr.handled_by', $request->teknisi_id);
+    }
+
+    $incomePerMonth = $incomeQuery
+        ->selectRaw("
+            EXTRACT(MONTH FROM sr.updated_at) as month,
+            EXTRACT(YEAR FROM sr.updated_at) as year,
+            SUM(sd.total_biaya) as total,
+            MAX(sr.rating) as rating,
+            MAX(sr.ulasan) as ulasan
+        ")
+        ->groupByRaw("EXTRACT(YEAR FROM sr.updated_at), EXTRACT(MONTH FROM sr.updated_at)")
+        ->orderByRaw("EXTRACT(YEAR FROM sr.updated_at), EXTRACT(MONTH FROM sr.updated_at)")
+        ->get();
+
+    return view('page.pemilik.riwayat', compact('selesai', 'tidakSelesai', 'incomePerMonth', 'users'));
+}
+public function ringkasanOwner(Request $request)
+{
+    $user = Auth::user();
+    if (! $user) {
+        return redirect()->route('login');
+    }
+
+    // Pastikan hanya role owner yang bisa akses
+    if ($user->role !== 'owner') {
+        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+    }
+
+    // Inisialisasi variabel
+    $selesai = collect();
+    $tidakSelesai = collect();
+    $users = User::where('role', 'teknisi')->get();
+
+    $querySelesai = ServiceRequest::with(['detail', 'handledBy'])
+        ->where('status', 'diterima')
+        ->where('proses', 'barang sudah selesai dan terbayar');
+
+    $queryTidak = ServiceRequest::with(['detail', 'handledBy'])
+        ->where('status', 'ditolak');
+
+    // filter teknisi jika ada
+    if ($request->filled('teknisi_id')) {
+        $querySelesai->where('handled_by', $request->teknisi_id);
+        $queryTidak->where('handled_by', $request->teknisi_id);
+    }
+
+    $selesai = $querySelesai->orderBy('updated_at', 'desc')->get();
+    $tidakSelesai = $queryTidak->orderBy('updated_at', 'desc')->get();
+
+    // ringkasan jumlah
+    $totalSelesai = $selesai->count();
+    $totalTidakSelesai = $tidakSelesai->count();
+    $totalTeknisi = $users->count();
+
+    return view('page.pemilik.ringkasan', compact(
+        'selesai',
+        'tidakSelesai',
+        'totalSelesai',
+        'totalTidakSelesai',
+        'totalTeknisi',
+        'users'
+    ));
+}
+
+
+
 
 }

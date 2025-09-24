@@ -15,29 +15,48 @@
 
     <div class="bg-gray-100 min-h-screen py-10 px-4">
         <div class="max-w-6xl mx-auto space-y-6">
+
             <!-- Status & Deskripsi -->
-            <div class="bg-white shadow rounded-lg p-6 border-l-4 border-blue-600">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fa-solid fa-screwdriver-wrench text-blue-600 text-2xl"></i>
-                    <h2 class="text-lg font-semibold capitalize">{{ $service->proses ?? 'Belum ada proses' }}</h2>
+            @if ($service->status === 'ditolak')
+                <!-- Jika status ditolak -->
+                <div class="bg-white shadow rounded-lg p-6 border-l-4 border-red-600">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fa-solid fa-circle-xmark text-red-600 text-2xl"></i>
+                        <h2 class="text-lg font-semibold text-red-600">Servis Ditolak</h2>
+                    </div>
+                    <p class="text-gray-600">
+                        Catatan Penolakan: <span class="font-medium">{{ $service->catatan ?? '-' }}</span>
+                    </p>
                 </div>
-                @php
-                    $descriptions = [
-                        'barang diterima' =>
-                            'Nantikan informasinya selanjutnya melalui WhatsApp maupun notifikasi jika barang sudah selesai',
-                        'barang sedang diperbaiki' =>
-                            'Nantikan informasinya selanjutnya melalui WhatsApp maupun notifikasi jika barang sudah selesai',
-                        'barang sudah selesai diperbaiki' =>
-                            'Silahkan Ambil Barang Ke Tempat Kami, Sesuai Dengan Alamat/Lokasi Yang Sudah Tertera. Bila Ada Kendala Bisa Hubungi Teknisi Kami Untuk Share Lokasi',
-                        'barang sudah selesai dan terbayar' =>
-                            'Silahkan Memberikan Rating Pelayanan Dan Juga Hubungi Jika Ada Kendala',
-                    ];
-                    $deskripsiProses = $descriptions[strtolower($service->proses ?? '')] ?? null;
-                @endphp
-                @if ($deskripsiProses)
-                    <p class="text-gray-600">{{ $deskripsiProses }}</p>
-                @endif
-            </div>
+            @else
+                <!-- Jika status diterima -->
+                <div class="bg-white shadow rounded-lg p-6 border-l-4 border-blue-600">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fa-solid fa-screwdriver-wrench text-blue-600 text-2xl"></i>
+                        <h2 class="text-lg font-semibold capitalize">{{ $service->proses ?? 'Belum ada proses' }}</h2>
+                    </div>
+                    @php
+                        $descriptions = [
+                            'barang diterima' =>
+                                'Nantikan informasinya selanjutnya melalui WhatsApp maupun notifikasi jika barang sudah selesai',
+                            'barang sedang diperbaiki' =>
+                                'Nantikan informasinya selanjutnya melalui WhatsApp maupun notifikasi jika barang sudah selesai',
+                            'barang sudah selesai diperbaiki' =>
+                                'Silahkan Ambil Barang Ke Tempat Kami, Sesuai Dengan Alamat/Lokasi Yang Sudah Tertera. Bila Ada Kendala Bisa Hubungi Teknisi Kami Untuk Share Lokasi',
+                            'barang sudah selesai dan terbayar' =>
+                                'Silahkan Memberikan Rating Pelayanan Dan Juga Hubungi Jika Ada Kendala',
+                        ];
+                        $currentProses = strtolower($service->proses ?? '');
+                        $deskripsiProses = $descriptions[$currentProses] ?? null;
+                    @endphp
+
+                    @if (empty($currentProses))
+                        <p class="text-gray-600">Antarkan barang elektronik ke tempat kami.</p>
+                    @elseif ($deskripsiProses)
+                        <p class="text-gray-600">{{ $deskripsiProses }}</p>
+                    @endif
+                </div>
+            @endif
 
             <!-- Main Content Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -76,12 +95,18 @@
                     <div class="bg-white shadow rounded-lg p-6">
                         <h3 class="font-semibold text-gray-700 mb-4">Teknisi</h3>
                         <div class="space-y-2 text-sm">
-                            <p><span class="text-gray-500">Nama Teknisi:</span> {{ $service->teknisi ?? '-' }}</p>
-                            <p><span class="text-gray-500">No. WA Teknisi:</span> {{ $service->wa_teknisi ?? '-' }}</p>
+                            <p>
+                                <span class="text-gray-500">Nama Teknisi:</span>
+                                {{ optional($service->handledBy)->name ?? '-' }}
+                            </p>
+                            <p>
+                                <span class="text-gray-500">No. WA Teknisi:</span>
+                                {{ optional($service->handledBy)->no_wa ?? '-' }}
+                            </p>
                             <div class="flex items-center gap-2">
                                 <span class="text-gray-500">Rata-rata Rating:</span>
                                 @php
-                                    $rating = $service->rating ?? (optional($service->user)->rating ?? 0);
+                                    $rating = optional($service->handledBy)->rating ?? 0;
                                     $filled = floor($rating);
                                     $half = $rating - $filled >= 0.5;
                                     $empty = 5 - $filled - ($half ? 1 : 0);
@@ -99,7 +124,56 @@
                                 </div>
                                 <span class="text-gray-600">{{ number_format($rating, 1) }}/5</span>
                             </div>
+                            <p>
+                                <span class="text-gray-500">Total Servis:</span>
+                                {{ optional($service->handledBy)->total_servis ?? 0 }}
+                            </p>
                         </div>
+
+                        <!-- Jika proses sudah selesai dan terbayar, tampilkan tombol rating -->
+                        @if ($service->proses === 'barang sudah selesai dan terbayar')
+                            <div class="mt-4 text-center">
+                                <h3 class="font-semibold text-gray-700 mb-2">Beri Rating Teknisi</h3>
+                                <button onclick="openModal()"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                    Beri Rating
+                                </button>
+                            </div>
+
+                            <!-- Modal Rating -->
+                            <div id="ratingModal"
+                                class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                                <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
+                                    <button onclick="closeModal()"
+                                        class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <h3 class="font-semibold text-gray-700 mb-3 text-center">Beri Rating Teknisi</h3>
+                                    <form action="{{ route('service.giveRating', $service->id) }}" method="POST">
+                                        @csrf
+                                        <div class="flex items-center justify-center gap-2 mb-3">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <label>
+                                                    <input type="radio" name="rating" value="{{ $i }}"
+                                                        class="hidden peer" required>
+                                                    <i
+                                                        class="fa-star fa-solid text-gray-300 peer-checked:text-yellow-400 text-2xl cursor-pointer"></i>
+                                                </label>
+                                            @endfor
+                                        </div>
+                                        <textarea name="ulasan" rows="3" placeholder="Tulis ulasan Anda (opsional)"
+                                            class="w-full border rounded-lg p-2 text-sm"></textarea>
+                                        <div class="text-center">
+                                            <button type="submit"
+                                                class="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                                Kirim Rating
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                 </div>
@@ -142,23 +216,32 @@
                             $passed = true;
                         @endphp
                         <div class="relative border-l-2 border-gray-200 ml-2">
-                            @foreach ($steps as $key => $label)
-                                @php
-                                    $active = $passed;
-                                    if ($key === $current) {
-                                        $active = true;
-                                        $passed = false;
-                                    }
-                                @endphp
-                                <div class="mb-6 ml-4">
-                                    <div
-                                        class="w-3 h-3 rounded-full mb-1 {{ $active ? 'bg-green-500' : 'bg-gray-300' }}">
+                            @if (empty($current))
+                                @foreach ($steps as $key => $label)
+                                    <div class="mb-6 ml-4">
+                                        <div class="w-3 h-3 rounded-full mb-1 bg-gray-300"></div>
+                                        <p class="text-gray-500">{{ $label }}</p>
                                     </div>
-                                    <p class="{{ $active ? 'text-green-600 font-semibold' : 'text-gray-500' }}">
-                                        {{ $label }}
-                                    </p>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            @else
+                                @foreach ($steps as $key => $label)
+                                    @php
+                                        $active = $passed;
+                                        if ($key === $current) {
+                                            $active = true;
+                                            $passed = false;
+                                        }
+                                    @endphp
+                                    <div class="mb-6 ml-4">
+                                        <div
+                                            class="w-3 h-3 rounded-full mb-1 {{ $active ? 'bg-green-500' : 'bg-gray-300' }}">
+                                        </div>
+                                        <p class="{{ $active ? 'text-green-600 font-semibold' : 'text-gray-500' }}">
+                                            {{ $label }}
+                                        </p>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                         <div class="mt-4 text-sm text-gray-500">
                             Perkiraan Barang Selesai:
@@ -179,6 +262,16 @@
 
         </div>
     </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('ratingModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('ratingModal').classList.add('hidden');
+        }
+    </script>
 </body>
 
 <footer class="footer">

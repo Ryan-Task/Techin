@@ -4,38 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Pembayaran</title>
+    <title>Cek Pembayaran</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-<body class="p-6">
-    <h1 class="text-2xl font-bold mb-4">Detail Pembayaran Servis</h1>
+@include('komponen.sidebar')
 
-    <div class="border p-4 rounded mb-4">
-        <p><strong>ID Servis:</strong> {{ $serviceDetail->service_id }}</p>
+<body class="">
 
-        <p><strong>Nama Sparepart:</strong> {{ $serviceDetail->nama_sparepart }}</p>
-        <p><strong>Harga Sparepart:</strong> Rp{{ number_format($serviceDetail->harga_sparepart, 0, ',', '.') }}</p>
-        <p><strong>Harga Jasa:</strong> Rp{{ number_format($serviceDetail->harga_jasa, 0, ',', '.') }}</p>
-        <p><strong>Total Biaya:</strong> Rp{{ number_format($serviceDetail->total_biaya, 0, ',', '.') }}</p>
+    <div class="ml-32">
+        <h2 class="text-2xl font-bold mb-6">Cek Pembayaran Servis</h2>
+
+        <!-- Tampilkan error jika ada -->
+        @if (session('error'))
+            <div class="mb-4 p-3 bg-red-200 text-red-800 rounded">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <form action="{{ route('pembayaran.check') }}" method="POST"
+            class="space-y-4 bg-white p-6 rounded shadow-md max-w-md">
+            @csrf
+
+            <label class="block">
+                <span class="font-medium">Masukkan ID Servis:</span>
+                <input type="text" name="service_id" class="border rounded p-2 w-full mt-1"
+                    placeholder="Contoh: 12345" required>
+            </label>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                Lanjutkan
+            </button>
+        </form>
     </div>
-
-    <h2 class="text-xl font-semibold mb-2">Pilih Metode Pembayaran:</h2>
-    <form action="#" method="POST" class="space-y-3">
-        @csrf
-        <label class="block">
-            <input type="radio" name="metode_pembayaran" value="cod" required>
-            Bayar di Tempat (COD)
-        </label>
-        <label class="block">
-            <input type="radio" name="metode_pembayaran" value="transfer" required>
-            Transfer Bank
-        </label>
-
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
-            Konfirmasi Pembayaran
-        </button>
-    </form>
 </body>
 
 </html>

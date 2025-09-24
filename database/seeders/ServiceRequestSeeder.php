@@ -16,12 +16,16 @@ class ServiceRequestSeeder extends Seeder
     {
         $jenisBarangList = ['HP', 'Laptop', 'PC', 'Tablet', 'TV', 'Lainnya'];
 
-        // 10 tanggal berbeda
+        // Membuat tanggal acak untuk setiap bulan di tahun 2024 dan 2025
         $dates = [];
-        for ($i = 0; $i < 10; $i++) {
-            $dates[] = Carbon::now()->subDays(rand(0, 30));
+        foreach ([2024, 2025] as $year) {
+            for ($month = 1; $month <= 12; $month++) {
+                $day = rand(1, 28); // aman untuk semua bulan
+                $dates[] = Carbon::create($year, $month, $day);
+            }
         }
 
+        // Membuat 30 data servis
         for ($i = 1; $i <= 30; $i++) {
             $date = $dates[array_rand($dates)];
 
