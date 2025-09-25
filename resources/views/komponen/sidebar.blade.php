@@ -1,7 +1,21 @@
 <div x-data="{ sidebarOpen: false }" class="relative">
+    <!-- Mobile Toggle Button - Arrow on Sidebar Edge -->
+    <div class="fixed lg:hidden z-50 top-4 left-0" :class="{ 'left-64': sidebarOpen }"
+        x-transition:enter="transition-all duration-300 ease-in-out" x-transition:enter-start="left-0"
+        x-transition:enter-end="left-64" x-transition:leave="transition-all duration-300 ease-in-out"
+        x-transition:leave-start="left-64" x-transition:leave-end="left-0">
+
+        <button @click="sidebarOpen = !sidebarOpen"
+            class="bg-teal-700 text-white p-3 rounded-r-full shadow-lg hover:bg-teal-600 transition-all duration-200 transform
+                   border-l-2 border-teal-600"
+            :class="{ 'rotate-180': sidebarOpen }">
+            <i class="fas fa-chevron-right text-lg"></i>
+        </button>
+    </div>
+
     <!-- Sidebar -->
     <aside id="sidebar"
-        class="fixed h-screen bg-teal-700 text-white flex flex-col w-64 lg:w-20 lg:hover:w-64 transition-all duration-300 ease-in-out shadow-xl z-50 group"
+        class="fixed h-screen bg-teal-700 text-white flex flex-col w-64 lg:w-20 lg:hover:w-64 transition-all duration-300 ease-in-out shadow-xl z-40 group"
         :class="{ '-translate-x-full lg:translate-x-0': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
         <!-- Header with Logo -->
@@ -13,9 +27,8 @@
                     Techin
                 </span>
             </div>
-            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-teal-200 hover:text-white">
-                <i x-show="!sidebarOpen" class="fas fa-bars text-xl"></i>
-                <i x-show="sidebarOpen" class="fas fa-times text-xl"></i>
+            <button @click="sidebarOpen = false" class="lg:hidden text-teal-200 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
             </button>
         </div>
 
@@ -33,11 +46,8 @@
         </div>
 
         <!-- Main Menu - Scrollable Area -->
-        <nav class="flex-1 flex flex-col px-2 py-4 overflow-y-auto 
-                   scrollbar-none">
-            <!-- Custom class to hide scrollbar -->
-
-            <!-- General Section -->
+        <nav class="flex-1 flex flex-col px-2 py-4 overflow-y-auto scrollbar-none">
+            <!-- General Section - Always Visible -->
             <div class="mb-4">
                 <p
                     class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
@@ -72,107 +82,185 @@
                 </ul>
             </div>
 
-            <!-- Technician Section -->
-            <div class="mb-4">
-                <p
-                    class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
-                    Teknisi
-                </p>
-                <ul class="space-y-1">
-                    <li>
-                        <a href="/daftar-servis"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Daftar
-                                Servis</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/check-pembayaran"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Pembayaran</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/history"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <!-- Technician Section - Visible for Technician and Owner -->
+            @auth
+                @if (auth()->user()->role === 'teknisi' || auth()->user()->role === 'owner')
+                    <div class="mb-4">
+                        <p
+                            class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
+                            Teknisi
+                        </p>
+                        <ul class="space-y-1">
+                            <li>
+                                <a href="/daftar-servis"
+                                    class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                    <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
+                                    <span
+                                        class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Daftar
+                                        Servis</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/check-pembayaran"
+                                    class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                    <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
+                                    <span
+                                        class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Pembayaran</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/history"
+                                    class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                    <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
+                                    <span
+                                        class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
 
-            <!-- Owner Section -->
-            <div class="mb-4">
-                <p
-                    class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
-                    Pemilik
-                </p>
-                <ul class="space-y-1">
-                    <li>
-                        <a href="ringkasan-owner"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-chart-line text-lg w-6 text-center text-teal-300"></i>
+                <!-- Owner Section - Visible Only for Owner -->
+                @if (auth()->user()->role === 'owner')
+                    <div class="mb-4">
+                        <p
+                            class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
+                            Pemilik
+                        </p>
+                        <ul class="space-y-1">
+                            <li>
+                                <a href="ringkasan-owner"
+                                    class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                    <i class="fas fa-chart-line text-lg w-6 text-center text-teal-300"></i>
+                                    <span
+                                        class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Ringkasan</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="riwayat-owner"
+                                    class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                    <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
+                                    <span
+                                        class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/pemilik/akun"
+                                    class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                    <i class="fas fa-user-cog text-lg w-6 text-center text-teal-300"></i>
+                                    <span
+                                        class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Kelola
+                                        Akun</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
+
+                <!-- User Info Section -->
+                <div class="mt-auto pt-4 border-t border-teal-600">
+                    <div class="px-3 py-2">
+                        <p
+                            class="text-xs text-teal-200 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
+                            Logged in as
+                        </p>
+                        <p
+                            class="font-medium text-sm lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
+                            {{ auth()->user()->name }}
+                        </p>
+                        <p
+                            class="text-xs text-teal-300 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300 capitalize">
+                            {{ auth()->user()->role }}
+                        </p>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                        @csrf
+                        <button type="submit"
+                            class="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200 text-left">
+                            <i class="fas fa-sign-out-alt text-lg w-6 text-center text-teal-300"></i>
                             <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Ringkasan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="riwayat-owner"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/pemilik/akun"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-user-cog text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Kelola
-                                Akun</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Logout</span>
+                        </button>
+                    </form>
+                </div>
+            @else
+                <!-- Login/Register Section for Guests -->
+            @endauth
         </nav>
+
+        <!-- Mobile Close Button at Bottom -->
+        <div class="p-4 border-t border-teal-600 lg:hidden">
+            <button @click="sidebarOpen = false"
+                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 rounded hover:bg-teal-500 text-sm transition-colors duration-200">
+                <i class="fas fa-chevron-left"></i>
+                <span>Tutup Menu</span>
+            </button>
+        </div>
     </aside>
 
-    <!-- Mobile Toggle Button -->
-    <div class="fixed lg:hidden bottom-4 right-4 z-40">
-        <button @click="sidebarOpen = !sidebarOpen"
-            class="bg-teal-700 text-white p-3 rounded-full shadow-lg hover:bg-teal-600 transition-colors duration-200">
-            <i x-show="!sidebarOpen" class="fas fa-bars text-xl"></i>
-            <i x-show="sidebarOpen" class="fas fa-times text-xl"></i>
-        </button>
-    </div>
-
     <!-- Mobile Overlay -->
-    <div class="fixed inset-0 z-30 lg:hidden" x-show="sidebarOpen" @click="sidebarOpen = false"
+    <div class="fixed inset-0 z-30 lg:hidden bg-black bg-opacity-50" x-show="sidebarOpen" @click="sidebarOpen = false"
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
     </div>
 </div>
 
-
 <style>
-    /* Add this to your main CSS file */
+    /* Scrollbar hiding */
     .scrollbar-none {
         -ms-overflow-style: none;
-        /* IE and Edge */
         scrollbar-width: none;
-        /* Firefox */
     }
 
     .scrollbar-none::-webkit-scrollbar {
         display: none;
-        /* Chrome, Safari and Opera */
+    }
+
+    /* Smooth transitions */
+    .transition-all {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 300ms;
+    }
+
+    /* Arrow button animations */
+    .rotate-180 {
+        transform: rotate(180deg);
     }
 </style>
+
+<script>
+    (function() {
+        if (!window.chatbase || window.chatbase("getState") !== "initialized") {
+            window.chatbase = (...arguments) => {
+                if (!window.chatbase.q) {
+                    window.chatbase.q = []
+                }
+                window.chatbase.q.push(arguments)
+            };
+            window.chatbase = new Proxy(window.chatbase, {
+                get(target, prop) {
+                    if (prop === "q") {
+                        return target.q
+                    }
+                    return (...args) => target(prop, ...args)
+                }
+            })
+        }
+        const onLoad = function() {
+            const script = document.createElement("script");
+            script.src = "https://www.chatbase.co/embed.min.js";
+            script.id = "BXVXbfs9A4GQFnP9SI9v4";
+            script.domain = "www.chatbase.co";
+            document.body.appendChild(script)
+        };
+        if (document.readyState === "complete") {
+            onLoad()
+        } else {
+            window.addEventListener("load", onLoad)
+        }
+    })();
+</script>

@@ -148,5 +148,8 @@
 
 </body>
 <br>
-@include('komponen.footer')
+
 </html>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>

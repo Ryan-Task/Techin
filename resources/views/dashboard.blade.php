@@ -689,15 +689,6 @@
                 </div>
             </section>
         </main>
-
-        <!-- Floating WhatsApp Button -->
-        <div class="fixed bottom-6 left-6 z-40">
-            <a href="https://wa.me/6281234567890?text=Halo%20Techin,%20saya%20ingin%20berkonsultasi" target="_blank"
-                class="bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all transform hover:scale-110 float-animation flex items-center">
-                <i class="fab fa-whatsapp text-2xl"></i>
-            </a>
-        </div>
-        @include('komponen.footer')
     </div>
 
     <script>
@@ -745,5 +736,8 @@
         }
     </script>
 </body>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>
 
 </html>

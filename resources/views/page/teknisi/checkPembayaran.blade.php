@@ -13,7 +13,7 @@
 <body class="bg-gray-100 font-sans">
     @include('komponen.sidebar')
 
-    <div class="ml-32 p-8 min-h-screen flex items-center justify-center">
+    <div class="p-8 min-h-screen flex items-center justify-center">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-xl p-8" x-data="{ type: 'id' }">
             <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">
                 <i class="fa-solid fa-money-check-dollar text-blue-700 mr-2"></i>
@@ -71,5 +71,8 @@
         </div>
     </div>
 </body>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>
 
 </html>

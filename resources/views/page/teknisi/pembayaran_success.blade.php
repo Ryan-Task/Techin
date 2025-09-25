@@ -29,5 +29,8 @@
         </div>
     </div>
 </body>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>
 
 </html>

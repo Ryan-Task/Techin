@@ -372,9 +372,7 @@
         </div>
     </div>
 
-    <footer class="footer mt-12">
-        @include('komponen.footer')
-    </footer>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -488,5 +486,8 @@
     </script>
 
 </body>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>
 
 </html>

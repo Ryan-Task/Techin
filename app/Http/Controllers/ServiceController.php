@@ -323,6 +323,7 @@ public function historyOwner(Request $request)
     if ($user->role !== 'owner') {
         abort(403, 'Anda tidak memiliki akses ke halaman ini.');
     }
+    
 
     // Inisialisasi agar variabel selalu ada
     $selesai = collect();

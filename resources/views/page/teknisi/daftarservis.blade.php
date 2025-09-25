@@ -587,10 +587,14 @@
                                     Pelanggan</th>
                                 <th
                                     class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    No Wa</th>
+                                <th
+                                    class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     ID Servis</th>
                                 <th
                                     class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Informasi Barang</th>
+
                                 <th
                                     class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Proses</th>
@@ -635,6 +639,10 @@
                                     <td class="px-4 md:px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900 truncate-mobile">
                                             {{ $service->nama_pelanggan }}</div>
+                                    </td>
+                                    <td class="px-4 md:px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900 truncate-mobile">
+                                            {{ $service->no_wa }}</div>
                                     </td>
                                     <td class="px-4 md:px-6 py-4 whitespace-nowrap">
                                         <span
@@ -780,7 +788,6 @@
         </div>
     </div>
 
-    @include('komponen.footer')
 
     <!-- Modal Catatan -->
     <div id="catatan-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 hidden">
@@ -1204,5 +1211,8 @@
         });
     </script>
 </body>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>
 
 </html>

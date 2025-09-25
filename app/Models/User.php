@@ -30,7 +30,8 @@ class User extends Authenticatable
         'rating',
         'password',
         'role',
-        'akses'
+        'akses',
+        'verification_code', // tambahkan ini
     ];
 
     /**

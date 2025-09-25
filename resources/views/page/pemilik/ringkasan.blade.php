@@ -579,5 +579,8 @@
         });
     </script>
 </body>
+<footer class="footer">
+    @include('komponen.footer')
+</footer>
 
 </html>
