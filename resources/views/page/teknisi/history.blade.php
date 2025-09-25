@@ -18,6 +18,78 @@
         .fade-enter-active {
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
+        /* Custom Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            background-color: white;
+            color: #6b7280;
+        }
+
+        .pagination-link:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+            border-color: #d1d5db;
+        }
+
+        .pagination-link.active {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .pagination-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f9fafb;
+        }
+
+        .pagination-link.disabled:hover {
+            background-color: #f9fafb;
+            color: #6b7280;
+            border-color: #e5e7eb;
+        }
+
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        @media (max-width: 640px) {
+            .pagination-link {
+                width: 2.25rem;
+                height: 2.25rem;
+                font-size: 0.8rem;
+            }
+
+            .pagination-ellipsis {
+                width: 2.25rem;
+                height: 2.25rem;
+            }
+        }
     </style>
 </head>
 
@@ -67,12 +139,6 @@
                                 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                             class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
                             <i class="fas fa-tools mr-2"></i>Data Servis
-                        </button>
-                        <button @click="activeTab = 'analisis'"
-                            :class="activeTab === 'analisis' ? 'border-blue-500 text-blue-600' :
-                                'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
-                            <i class="fas fa-chart-line mr-2"></i>Analisis
                         </button>
                     </nav>
                 </div>
@@ -138,7 +204,7 @@
                         <p class="text-gray-500">Servis yang telah selesai dan terbayar akan muncul di sini.</p>
                     </div>
                 @else
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-10">
                         <div class="overflow-x-auto">
                             <table class="w-full">
                                 <thead class="bg-gray-50">
@@ -204,10 +270,71 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
 
-                    <div class="mt-6">
-                        {{ $services->links('pagination::tailwind') }}
+                        <!-- Pagination -->
+                        <div class="px-6 py-4 bg-gray-50 border-t">
+                            <div class="pagination">
+                                {{-- Previous Page Link --}}
+                                @if ($services->onFirstPage())
+                                    <span class="pagination-link disabled">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                @else
+                                    <a href="{{ $services->previousPageUrl() }}" class="pagination-link">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                @endif
+
+                                {{-- Pagination Elements --}}
+                                @php
+                                    $current = $services->currentPage();
+                                    $last = $services->lastPage();
+                                    $start = max($current - 2, 1);
+                                    $end = min($current + 2, $last);
+
+                                    if ($start > 1) {
+                                        echo '<a href="' . $services->url(1) . '" class="pagination-link">1</a>';
+                                        if ($start > 2) {
+                                            echo '<span class="pagination-ellipsis">...</span>';
+                                        }
+                                    }
+
+                                    for ($i = $start; $i <= $end; $i++) {
+                                        if ($i == $current) {
+                                            echo '<span class="pagination-link active">' . $i . '</span>';
+                                        } else {
+                                            echo '<a href="' .
+                                                $services->url($i) .
+                                                '" class="pagination-link">' .
+                                                $i .
+                                                '</a>';
+                                        }
+                                    }
+
+                                    if ($end < $last) {
+                                        if ($end < $last - 1) {
+                                            echo '<span class="pagination-ellipsis">...</span>';
+                                        }
+                                        echo '<a href="' .
+                                            $services->url($last) .
+                                            '" class="pagination-link">' .
+                                            $last .
+                                            '</a>';
+                                    }
+                                @endphp
+
+                                {{-- Next Page Link --}}
+                                @if ($services->hasMorePages())
+                                    <a href="{{ $services->nextPageUrl() }}" class="pagination-link">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                @else
+                                    <span class="pagination-link disabled">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 @endif
             </div>

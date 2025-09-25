@@ -379,47 +379,170 @@ public function ringkasanOwner(Request $request)
         return redirect()->route('login');
     }
 
-    // Pastikan hanya role owner yang bisa akses
+    // Batasi hanya untuk owner
     if ($user->role !== 'owner') {
         abort(403, 'Anda tidak memiliki akses ke halaman ini.');
     }
 
-    // Inisialisasi variabel
-    $selesai = collect();
-    $tidakSelesai = collect();
-    $users = User::where('role', 'teknisi')->get();
+    // Tahun untuk perbandingan
+    $currentYear = now()->year;
+    $lastYear    = $currentYear - 1;
 
+    // Ambil daftar teknisi (untuk dropdown)
+    $users = User::where('role', 'teknisi')->orderBy('name')->get();
+
+    // Query dasar untuk tabel Selesai
     $querySelesai = ServiceRequest::with(['detail', 'handledBy'])
-        ->where('status', 'diterima')
-        ->where('proses', 'barang sudah selesai dan terbayar');
+        ->join('service_details as sd', 'service_requests.service_id', '=', 'sd.service_id')
+        ->where('service_requests.status', 'diterima')
+        ->where('service_requests.proses', 'barang sudah selesai dan terbayar')
+        ->select('service_requests.*', 'sd.harga_jasa', 'sd.harga_sparepart', 'sd.total_biaya');
 
+    // Query dasar untuk tabel Tidak Selesai
     $queryTidak = ServiceRequest::with(['detail', 'handledBy'])
-        ->where('status', 'ditolak');
+        ->leftJoin('service_details as sd', 'service_requests.service_id', '=', 'sd.service_id')
+        ->where('service_requests.status', 'ditolak')
+        ->select('service_requests.*', 'sd.harga_jasa', 'sd.harga_sparepart', 'sd.total_biaya');
 
-    // filter teknisi jika ada
+    // Jika ada filter teknisi dari query string
+    $teknisiId = null;
     if ($request->filled('teknisi_id')) {
-        $querySelesai->where('handled_by', $request->teknisi_id);
-        $queryTidak->where('handled_by', $request->teknisi_id);
+        $teknisiId = (int) $request->input('teknisi_id');
+        $querySelesai->where('service_requests.handled_by', $teknisiId);
+        $queryTidak->where('service_requests.handled_by', $teknisiId);
     }
 
-    $selesai = $querySelesai->orderBy('updated_at', 'desc')->get();
-    $tidakSelesai = $queryTidak->orderBy('updated_at', 'desc')->get();
+    // Ambil koleksi untuk tampilan tabel
+    $selesai = $querySelesai->orderBy('service_requests.updated_at', 'desc')->get();
+    $tidakSelesai = $queryTidak->orderBy('service_requests.updated_at', 'desc')->get();
 
-    // ringkasan jumlah
+    // Totals untuk cards
     $totalSelesai = $selesai->count();
     $totalTidakSelesai = $tidakSelesai->count();
     $totalTeknisi = $users->count();
 
-    return view('page.pemilik.ringkasan', compact(
-        'selesai',
-        'tidakSelesai',
-        'totalSelesai',
-        'totalTidakSelesai',
-        'totalTeknisi',
-        'users'
-    ));
-}
+    // ==========================
+    // Chart data: total biaya per bulan tahun ini & tahun lalu
+    // ==========================
+    $thisYearQuery = DB::table('service_requests as sr')
+        ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+        ->where('sr.status', 'diterima')
+        ->where('sr.proses', 'barang sudah selesai dan terbayar')
+        ->whereYear('sr.updated_at', $currentYear);
 
+    $lastYearQuery = DB::table('service_requests as sr')
+        ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+        ->where('sr.status', 'diterima')
+        ->where('sr.proses', 'barang sudah selesai dan terbayar')
+        ->whereYear('sr.updated_at', $lastYear);
+
+    if ($teknisiId) {
+        $thisYearQuery->where('sr.handled_by', $teknisiId);
+        $lastYearQuery->where('sr.handled_by', $teknisiId);
+    }
+
+    $thisYearData = $thisYearQuery
+        ->selectRaw("EXTRACT(MONTH FROM sr.updated_at)::int as month, COALESCE(SUM(sd.total_biaya),0) as total")
+        ->groupByRaw("EXTRACT(MONTH FROM sr.updated_at)")
+        ->pluck('total', 'month');
+
+    $lastYearData = $lastYearQuery
+        ->selectRaw("EXTRACT(MONTH FROM sr.updated_at)::int as month, COALESCE(SUM(sd.total_biaya),0) as total")
+        ->groupByRaw("EXTRACT(MONTH FROM sr.updated_at)")
+        ->pluck('total', 'month');
+
+    // Susun array 12 bulan
+    $months = range(1, 12);
+    $thisYearArr = [];
+    $lastYearArr = [];
+    foreach ($months as $m) {
+        $thisYearArr[] = isset($thisYearData[$m]) ? (float) $thisYearData[$m] : 0;
+        $lastYearArr[] = isset($lastYearData[$m]) ? (float) $lastYearData[$m] : 0;
+    }
+
+    // ==========================
+    // Pie Chart: total biaya per teknisi
+    // ==========================
+    $pieQuery = DB::table('service_requests as sr')
+        ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+        ->join('users as u', 'sr.handled_by', '=', 'u.id')
+        ->where('sr.status', 'diterima')
+        ->where('sr.proses', 'barang sudah selesai dan terbayar')
+        ->select('u.name as teknisi', DB::raw('SUM(sd.total_biaya) as total'))
+        ->groupBy('u.name');
+
+    if ($teknisiId) {
+        $pieQuery->where('sr.handled_by', $teknisiId);
+    }
+
+    $pieRaw = $pieQuery->get();
+    $pieLabels = $pieRaw->pluck('teknisi')->toArray();
+    $pieValues = $pieRaw->pluck('total')->map(fn($val) => (float) $val)->toArray();
+
+    // ==========================
+    // Bar Chart Horizontal: Distribusi rating (1–5)
+    // ==========================
+    $ratingQuery = DB::table('service_requests as sr')
+        ->whereNotNull('sr.rating');
+
+    if ($teknisiId) {
+        $ratingQuery->where('sr.handled_by', $teknisiId);
+    }
+
+    $ratingCounts = $ratingQuery
+        ->select('sr.rating', DB::raw('COUNT(*) as total'))
+        ->groupBy('sr.rating')
+        ->pluck('total', 'sr.rating');
+
+    // susun array [1,2,3,4,5]
+    $ratingArr = [];
+    for ($i = 1; $i <= 5; $i++) {
+        $ratingArr[] = $ratingCounts[$i] ?? 0;
+    }
+    
+
+    // ==========================
+    // Tambahan: Pendapatan Bersih
+    // ==========================
+    $pendapatanBersihQuery = DB::table('service_requests as sr')
+        ->join('service_details as sd', 'sr.service_id', '=', 'sd.service_id')
+        ->where('sr.status', 'diterima')
+        ->where('sr.proses', 'barang sudah selesai dan terbayar');
+
+    if ($teknisiId) {
+        $pendapatanBersihQuery->where('sr.handled_by', $teknisiId);
+    }
+
+    $pendapatanBersih = $pendapatanBersihQuery
+        ->select(
+            DB::raw('COALESCE(SUM(sd.total_biaya),0) as total_biaya'),
+            DB::raw('COALESCE(SUM(sd.harga_sparepart),0) as total_sparepart')
+        )
+        ->first();
+
+    // pastikan hasil bukan stdClass saat dikurangi
+    $totalBiaya = (float) ($pendapatanBersih->total_biaya ?? 0);
+    $totalSparepart = (float) ($pendapatanBersih->total_sparepart ?? 0);
+    $pendapatanBersihVal = $totalBiaya - $totalSparepart;
+
+    // Kirim ke view
+    return view('page.pemilik.ringkasan', [
+        'users' => $users,
+        'selesai' => $selesai,
+        'tidakSelesai' => $tidakSelesai,
+        'totalSelesai' => $totalSelesai,
+        'totalTidakSelesai' => $totalTidakSelesai,
+        'totalTeknisi' => $totalTeknisi,
+        'currentYear' => $currentYear,
+        'lastYearVal' => $lastYear,
+        'thisYear' => json_encode($thisYearArr),
+        'lastYear' => json_encode($lastYearArr),
+        'pieLabels' => json_encode($pieLabels),
+        'pieValues' => json_encode($pieValues),
+        'ratingCounts' => $ratingArr,
+        'pendapatanBersih' => $pendapatanBersihVal,
+    ]);
+}
 
 
 

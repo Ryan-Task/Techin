@@ -17,7 +17,7 @@
     <div class="bg-gray-100 min-h-screen flex items-center justify-center">
         <div class="w-full max-w-lg bg-white shadow-lg rounded-xl p-8" x-data="{ type: 'id' }">
             <h1 class="text-2xl font-bold text-gray-800 text-center mb-6">
-                <i class="fa-solid fa-screwdriver-wrench text-blue-600 mr-2"></i>
+                <i class="fa-solid fa-screwdriver-wrench text-teal-700 mr-2"></i>
                 Cek Status Servis
             </h1>
 
@@ -34,12 +34,12 @@
                 <!-- Pilih input pakai toggle -->
                 <div class="flex justify-center space-x-4 mb-4">
                     <button type="button" @click="type = 'id'"
-                        :class="type === 'id' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'"
+                        :class="type === 'id' ? 'bg-teal-700 text-white' : 'bg-gray-200 text-gray-600'"
                         class="px-4 py-2 rounded-lg transition">
                         <i class="fa-solid fa-id-card mr-1"></i> ID Servis
                     </button>
                     <button type="button" @click="type = 'wa'"
-                        :class="type === 'wa' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'"
+                        :class="type === 'wa' ? 'bg-teal-700 text-white' : 'bg-gray-200 text-gray-600'"
                         class="px-4 py-2 rounded-lg transition">
                         <i class="fa-brands fa-whatsapp mr-1"></i> No. WA
                     </button>
@@ -64,7 +64,7 @@
                 <!-- Tombol -->
                 <div class="text-center">
                     <button type="submit"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition">
+                        class="w-full bg-teal-700 hover:bg-teal-800 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition">
                         <i class="fa-solid fa-magnifying-glass mr-2"></i> Cek Status
                     </button>
                 </div>

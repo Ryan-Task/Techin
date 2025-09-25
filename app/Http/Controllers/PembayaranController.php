@@ -19,18 +19,21 @@ class PembayaranController extends Controller
     {
         // validasi sederhana
         $request->validate([
-            'service_id' => 'required'
+            'keyword' => 'required'
         ]);
+
+        $keyword = $request->keyword;
 
         // Ambil service detail (eager load service request & handledBy)
         $service = ServiceDetail::with('service.handledBy')
-            ->whereHas('service', function($q) use ($request) {
-                $q->where('service_id', $request->service_id);
+            ->whereHas('service', function($q) use ($keyword) {
+                $q->where('service_id', $keyword)
+                  ->orWhere('no_wa', $keyword);
             })
             ->first();
 
         if (!$service) {
-            return back()->with('error', 'ID Servis tidak ditemukan');
+            return back()->with('error', 'ID Servis atau No. WA tidak ditemukan');
         }
 
         // Pastikan total_biaya valid
@@ -112,7 +115,8 @@ class PembayaranController extends Controller
     {
         $service = ServiceDetail::with('service')
             ->whereHas('service', function($q) use ($request) {
-                $q->where('service_id', $request->service_id);
+                $q->where('service_id', $request->service_id)
+                  ->orWhere('no_wa', $request->service_id);
             })
             ->first();
 

@@ -8,7 +8,7 @@ use App\Http\Controllers\PembayaranController;
 
 Route::middleware(['auth'])->group(function () {
     // Ringkasan untuk owner
-    Route::get('/pemilik/ringkasan', [ServiceController::class, 'ringkasanOwner'])->name('pemilik.ringkasan');
+    Route::get('/ringkasan-owner', [ServiceController::class, 'ringkasanOwner'])->name('pemilik.ringkasan');
 });
 
 Route::get('/riwayat-owner', [ServiceController::class, 'historyOwner'])
