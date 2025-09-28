@@ -71,6 +71,14 @@
                         </a>
                     </li>
                     <li>
+                        <a href="/check-pembayaran"
+                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                            <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
+                            <span
+                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Pembayaran</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="/service/check"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-tasks text-lg w-6 text-center text-teal-300"></i>
@@ -79,6 +87,7 @@
                                 Status</span>
                         </a>
                     </li>
+
                 </ul>
             </div>
 
@@ -145,7 +154,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="/pemilik/akun"
+                                <a href="/akun-owner"
                                     class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                                     <i class="fas fa-user-cog text-lg w-6 text-center text-teal-300"></i>
                                     <span
@@ -201,7 +210,7 @@
     </aside>
 
     <!-- Mobile Overlay -->
-    <div class="fixed inset-0 z-30 lg:hidden bg-black bg-opacity-50" x-show="sidebarOpen" @click="sidebarOpen = false"
+    <div class="fixed inset-0 z-30 lg:hidden" x-show="sidebarOpen" @click="sidebarOpen = false"
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">

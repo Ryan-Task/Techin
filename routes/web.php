@@ -7,6 +7,11 @@ use App\Http\Controllers\Auth\TeknisiOwnerLoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PembayaranController;
 
+// Redirect root '/' otomatis ke /beranda
+Route::get('/', function () {
+    return redirect('/beranda');
+});
+
 // Logout
 Route::post('/logout', function () {
     Auth::logout();
@@ -14,10 +19,6 @@ Route::post('/logout', function () {
 })->name('logout');
 
 // Route publik tanpa login
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::get('/beranda', function () {
     return view('dashboard');
 });
@@ -32,29 +33,31 @@ Route::post('/login-teknisi-owner', [TeknisiOwnerLoginController::class, 'login'
 
 // Route yang membutuhkan auth
 Route::middleware(['auth'])->group(function () {
+
     // Ringkasan untuk owner
     Route::get('/ringkasan-owner', [ServiceController::class, 'ringkasanOwner'])->name('pemilik.ringkasan');
 
-    // Route pemilik
-    Route::prefix('pemilik')->group(function () {
-        Route::get('/akun', [UserController::class, 'index'])->name('pemilik.akun.index');
-        Route::post('/akun', [UserController::class, 'store'])->name('pemilik.akun.store');
-        Route::put('/akun/{id}/access', [UserController::class, 'toggleAccess'])->name('pemilik.akun.toggleAccess');
-        Route::post('/akun/{id}/toggle-access', [UserController::class, 'toggleAccess'])->name('pemilik.akun.toggleAccess.post');
-        Route::delete('/akun/{id}', [UserController::class, 'destroy'])->name('pemilik.akun.destroy');
+    // Route pemilik tanpa prefix 'pemilik'
+    Route::get('/akun-owner', [UserController::class, 'index'])->name('pemilik.akun.index');
+    Route::post('/akun-owner', [UserController::class, 'store'])->name('pemilik.akun.store');
+    Route::put('/akun-owner/{id}/access', [UserController::class, 'toggleAccess'])->name('pemilik.akun.toggleAccess');
+    Route::post('/akun-owner/{id}/toggle-access', [UserController::class, 'toggleAccess'])->name('pemilik.akun.toggleAccess.post');
+    Route::delete('/akun-owner/{id}', [UserController::class, 'destroy'])->name('pemilik.akun.destroy');
 
-        // Tambahan perbaikan: route verify aman untuk POST
-        Route::match(['get', 'post'], '/akun/verify', [UserController::class, 'verify'])->name('pemilik.akun.verify');
+    // Route verify
+    Route::match(['get', 'post'], '/akun-owner/verify', [UserController::class, 'verify'])->name('pemilik.akun.verify');
 
-        // Route tambahan untuk resend verification code
-        Route::post('/akun/{id}/resend-code', [UserController::class, 'resendCode'])->name('pemilik.akun.resendCode');
-    });
+    // Resend code
+    Route::post('/akun-owner/{id}/resend-code', [UserController::class, 'resendCode'])->name('pemilik.akun.resendCode');
 
     // Halaman daftar servis (teknisi/owner)
     Route::get('/daftar-servis', [ServiceController::class, 'daftarServis'])->name('service.daftar');
 
     // Route baru untuk update proses & status
     Route::post('/daftar-servis/update', [ServiceController::class, 'updateProsesStatus'])->name('service.updateProsesStatus');
+
+    // Route riwayat owner
+    Route::get('/riwayat-owner', [ServiceController::class, 'historyOwner'])->name('riwayat.owner');
 });
 
 // Route service umum
@@ -80,8 +83,3 @@ Route::delete('/service/bulk-delete', [ServiceController::class, 'bulkDelete'])-
 Route::get('/register', function () {
     return redirect('/login-teknisi-owner');
 })->name('register');
-
-// Route riwayat owner (auth)
-Route::get('/riwayat-owner', [ServiceController::class, 'historyOwner'])
-    ->middleware('auth')
-    ->name('riwayat.owner');

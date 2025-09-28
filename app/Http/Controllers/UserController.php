@@ -6,12 +6,30 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerifyAccountMail;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    // =========================
+    // Cek role owner
+    // =========================
+    private function authorizeOwner()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        if ($user->role !== 'owner') {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+    }
+
     // Tampilkan daftar akun
     public function index(Request $request)
     {
+        $this->authorizeOwner(); // proteksi role owner
+
         $search = $request->input('search');
         $users = User::when($search, function($query, $search) {
                 return $query->where('name', 'like', "%$search%")
@@ -25,6 +43,8 @@ class UserController extends Controller
     // Tambah akun baru
     public function store(Request $request)
     {
+        $this->authorizeOwner(); // proteksi role owner
+
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
@@ -65,6 +85,8 @@ class UserController extends Controller
     // Endpoint untuk memverifikasi kode
     public function verify(Request $request)
     {
+        $this->authorizeOwner(); // proteksi role owner jika hanya owner yang bisa verifikasi akun teknisi
+
         $request->validate([
             'email' => 'required|email',
             'code' => 'required|digits:6',
@@ -95,6 +117,8 @@ class UserController extends Controller
     // Toggle akses (untuk admin/owner)
     public function toggleAccess($id)
     {
+        $this->authorizeOwner(); // proteksi role owner
+
         $user = User::findOrFail($id);
         $user->akses = !$user->akses;
         $user->save();
@@ -109,6 +133,8 @@ class UserController extends Controller
     // Hapus akun
     public function destroy($id)
     {
+        $this->authorizeOwner(); // proteksi role owner
+
         User::destroy($id);
 
         if (request()->expectsJson()) {
@@ -124,6 +150,8 @@ class UserController extends Controller
     // Tambahan: Resend verification code
     public function resendCode($id)
     {
+        $this->authorizeOwner(); // proteksi role owner
+
         $user = User::findOrFail($id);
 
         if ($user->akses) {

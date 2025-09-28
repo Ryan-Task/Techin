@@ -145,28 +145,44 @@
 
                         <div class="space-y-4">
                             <!-- COD Option -->
-                            <div class="payment-card cursor-pointer p-4 rounded-lg"
-                                :class="{ 'selected': paymentMethod === 'cod' }" @click="paymentMethod = 'cod'">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                                            <i class="fas fa-money-bill-wave text-gray-600"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-gray-800">Cash on Delivery</p>
-                                            <p class="text-sm text-gray-500">Bayar saat servis selesai</p>
+                            @auth
+                                @if (auth()->user()->role === 'teknisi')
+                                    <div class="payment-card cursor-pointer p-4 rounded-lg"
+                                        :class="{ 'selected': paymentMethod === 'cod' }"
+                                        @click="paymentMethod = 'cod'">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div
+                                                    class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                                    <i class="fas fa-money-bill-wave text-gray-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-gray-800">Cash on Delivery</p>
+                                                    <p class="text-sm text-gray-500">Bayar saat servis selesai</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"
+                                                    :class="{ 'bg-blue-500 border-blue-500': paymentMethod === 'cod' }">
+                                                    <i x-show="paymentMethod === 'cod'"
+                                                        class="fas fa-check text-white text-xs"></i>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="flex items-center">
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center"
-                                            :class="{ 'bg-blue-500 border-blue-500': paymentMethod === 'cod' }">
-                                            <i x-show="paymentMethod === 'cod'"
-                                                class="fas fa-check text-white text-xs"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                @endif
+                            @endauth
+
+                            <!-- Jika COD tidak muncul, tampilkan deskripsi -->
+                            @guest
+                                <p class="text-sm text-gray-600 mt-1"><strong>COD hanya bisa dilakukan di tempat
+                                        kami.</strong></p>
+                            @else
+                                @if (auth()->user()->role !== 'teknisi')
+                                    <p class="text-sm text-gray-600 mt-1"><strong>COD hanya bisa dilakukan di tempat
+                                            kami.</strong></p>
+                                @endif
+                            @endguest
 
                             <!-- E-Wallet Option -->
                             <div class="payment-card cursor-pointer p-4 rounded-lg"
@@ -197,16 +213,21 @@
                         <!-- Payment Buttons -->
                         <div class="mt-8 space-y-3">
                             <!-- COD Button -->
-                            <form method="POST" action="{{ route('pembayaran.cod') }}"
-                                x-show="paymentMethod === 'cod'">
-                                @csrf
-                                <input type="hidden" name="service_id" value="{{ $service->service->service_id }}">
-                                <button type="submit"
-                                    class="w-full bg-gray-700 hover:bg-gray-800 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Konfirmasi COD</span>
-                                </button>
-                            </form>
+                            @auth
+                                @if (auth()->user()->role === 'teknisi')
+                                    <form method="POST" action="{{ route('pembayaran.cod') }}"
+                                        x-show="paymentMethod === 'cod'">
+                                        @csrf
+                                        <input type="hidden" name="service_id"
+                                            value="{{ $service->service->service_id }}">
+                                        <button type="submit"
+                                            class="w-full bg-gray-700 hover:bg-gray-800 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Konfirmasi COD</span>
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
 
                             <!-- E-Wallet Button -->
                             <button x-show="paymentMethod === 'ewallet'" id="ewallet-button"
@@ -245,28 +266,21 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('payment', () => ({
                 init() {
-                    // Initialize payment method from localStorage or default to 'cod'
                     const savedMethod = localStorage.getItem('selectedPaymentMethod');
                     if (savedMethod) {
                         this.paymentMethod = savedMethod;
                     }
                 },
-
                 paymentMethod: 'cod',
-
                 watchPaymentMethod() {
-                    // Save selected payment method to localStorage
                     localStorage.setItem('selectedPaymentMethod', this.paymentMethod);
                 }
             }));
         });
 
-        // E-Wallet Payment Handler
         document.getElementById('ewallet-button')?.addEventListener('click', function() {
             const button = this;
             const originalText = button.innerHTML;
-
-            // Show loading state
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Memproses...</span>';
             button.disabled = true;
 
@@ -301,11 +315,10 @@
         });
 
         function showNotification(message, type = 'info') {
-            // Create notification element
             const notification = document.createElement('div');
             notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white z-50 transform transition-transform duration-300 ${
-                type === 'error' ? 'bg-red-500' : 
-                type === 'warning' ? 'bg-yellow-500' : 
+                type === 'error' ? 'bg-red-500' :
+                type === 'warning' ? 'bg-yellow-500' :
                 type === 'success' ? 'bg-green-500' : 'bg-blue-500'
             }`;
             notification.innerHTML = `
@@ -314,10 +327,7 @@
                     <span>${message}</span>
                 </div>
             `;
-
             document.body.appendChild(notification);
-
-            // Remove notification after 3 seconds
             setTimeout(() => {
                 notification.style.transform = 'translateX(100%)';
                 setTimeout(() => {
@@ -326,10 +336,8 @@
             }, 3000);
         }
 
-        // Add fade-in animation to elements as they come into view
         document.addEventListener('DOMContentLoaded', function() {
             const fadeElements = document.querySelectorAll('.fade-in');
-
             const fadeInObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {

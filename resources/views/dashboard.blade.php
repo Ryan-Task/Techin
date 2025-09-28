@@ -518,10 +518,10 @@
                                         <i class="fas fa-download mr-2"></i>2.3 MB
                                     </div>
                                 </div>
-                                <button onclick="downloadFile('tata-cara-servis-techin.pdf')"
+                                <a href="{{ asset('dokumen/tata-cara-servis-techin.pdf') }}" download
                                     class="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
                                     <i class="fas fa-download mr-2"></i>Download Panduan
-                                </button>
+                                </a>
                             </div>
                         </div>
 
@@ -552,10 +552,10 @@
                                         <i class="fas fa-download mr-2"></i>1.8 MB
                                     </div>
                                 </div>
-                                <button onclick="downloadFile('syarat-ketentuan-techin.pdf')"
+                                <a href="{{ asset('dokumen/syarat-ketentuan-techin.pdf') }}" download
                                     class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
                                     <i class="fas fa-download mr-2"></i>Download S&K
-                                </button>
+                                </a>
                             </div>
                         </div>
 
@@ -587,13 +587,14 @@
                                         <i class="fas fa-download mr-2"></i>4.1 MB
                                     </div>
                                 </div>
-                                <button onclick="downloadFile('brosur-layanan-techin.pdf')"
+                                <a href="{{ asset('dokumen/brosur-layanan-techin.pdf') }}" download
                                     class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center group-hover:shadow-lg">
                                     <i class="fas fa-download mr-2"></i>Download Brosur
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Additional Info -->
                     <div class="mt-12 text-center">

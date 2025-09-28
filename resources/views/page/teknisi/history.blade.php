@@ -167,7 +167,7 @@
                                 <i class="fas fa-money-bill-wave text-xl"></i>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600">Total Pendapatan</p>
+                                <p class="text-sm text-gray-600">Total Pendapatan Kotor</p>
                                 <h3 class="text-2xl font-bold text-gray-800">
                                     Rp{{ number_format($totalPendapatan, 0, ',', '.') }}
                                 </h3>

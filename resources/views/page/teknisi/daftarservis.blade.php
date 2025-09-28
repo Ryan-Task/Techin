@@ -415,6 +415,10 @@
                     } else {
                         $ratingDescription = 'Belum Ada Rating';
                     }
+
+                    // Hitung jumlah servis yang ditangani oleh user yang login
+                    $servisDiterima = $services->where('handled_by', $user->id)->where('status', 'diterima')->count();
+                    $servisDitolak = $services->where('handled_by', $user->id)->where('status', 'ditolak')->count();
                 @endphp
 
                 <!-- Card Info + Rating (hanya user login) -->
@@ -485,9 +489,9 @@
                             <i class="fas fa-check-circle text-lg md:text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-xs md:text-sm text-gray-600">Diterima</p>
+                            <p class="text-xs md:text-sm text-gray-600">Diterima Akunku</p>
                             <h3 class="text-xl md:text-2xl font-bold text-gray-800">
-                                {{ $services->where('status', 'diterima')->count() }}
+                                {{ $servisDiterima }}
                             </h3>
                         </div>
                     </div>
@@ -499,9 +503,9 @@
                             <i class="fas fa-times-circle text-lg md:text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-xs md:text-sm text-gray-600">Ditolak</p>
+                            <p class="text-xs md:text-sm text-gray-600">Ditolak Akunku</p>
                             <h3 class="text-xl md:text-2xl font-bold text-gray-800">
-                                {{ $services->where('status', 'ditolak')->count() }}
+                                {{ $servisDitolak }}
                             </h3>
                         </div>
                     </div>
@@ -873,20 +877,10 @@
             counts[date] = (counts[date] || 0) + 1;
         });
 
-        // Format tanggal untuk tampilan yang lebih baik
-        const formattedLabels = Object.keys(counts).map(date => {
-            const d = new Date(date);
-            return d.toLocaleDateString('id-ID', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        });
-
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: formattedLabels,
+                labels: Object.keys(counts).map(() => ''),
                 datasets: [{
                     label: 'Jumlah Servis',
                     data: Object.values(counts),
@@ -906,12 +900,26 @@
                     },
                     tooltip: {
                         mode: 'index',
-                        intersect: false
+                        intersect: false,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                // Tampilkan tanggal dalam tooltip
+                                const index = tooltipItems[0].dataIndex;
+                                const dates = Object.keys(counts);
+                                const date = new Date(dates[index]);
+                                return date.toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                });
+                            }
+                        }
                     }
                 },
                 scales: {
                     x: {
                         ticks: {
+                            display: false, // Hilangkan tulisan tanggal di sumbu x
                             maxRotation: 0,
                             minRotation: 0,
                             font: {
