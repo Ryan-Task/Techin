@@ -10,8 +10,11 @@
 </head>
 
 <body class="bg-gray-100">
-    <div class="container mx-auto p-6">
-        <h1 class="text-2xl font-bold mb-6">Ringkasan Servis</h1>
+    @include('komponen.sidebar')
+
+    <main class="lg:ml-20 transition-all duration-300">
+        <div class="container mx-auto p-6">
+            <h1 class="text-2xl font-bold mb-6">Ringkasan Servis</h1>
 
         <!-- Filter Teknisi -->
         <form method="GET" class="mb-4 flex space-x-2">
@@ -103,7 +106,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
+        </div>
+    </main>
 </body>
 
 </html>

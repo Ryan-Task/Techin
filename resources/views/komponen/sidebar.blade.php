@@ -37,6 +37,12 @@
                    scrollbar-none">
             <!-- Custom class to hide scrollbar -->
 
+            @php
+                $authUser = auth()->user();
+                $isTeknisi = $authUser && $authUser->role === 'teknisi';
+                $isOwner = $authUser && $authUser->role === 'owner';
+            @endphp
+
             <!-- General Section -->
             <div class="mb-4">
                 <p
@@ -69,78 +75,82 @@
                                 Status</span>
                         </a>
                     </li>
-                </ul>
-            </div>
-
-            <!-- Technician Section -->
-            <div class="mb-4">
-                <p
-                    class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
-                    Teknisi
-                </p>
-                <ul class="space-y-1">
                     <li>
-                        <a href="/daftar-servis"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Daftar
-                                Servis</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/check-pembayaran"
+                        <a href="{{ route('pembayaran.form') }}"
                             class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
                             <i class="fas fa-money-bill text-lg w-6 text-center text-teal-300"></i>
                             <span
                                 class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Pembayaran</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="/history"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
 
+            <!-- Technician Section -->
+            @if ($isTeknisi || $isOwner)
+                <div class="mb-4">
+                    <p
+                        class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
+                        Teknisi
+                    </p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{{ route('service.daftar') }}"
+                                class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                <i class="fas fa-list text-lg w-6 text-center text-teal-300"></i>
+                                <span
+                                    class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Daftar
+                                    Servis</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('service.history') }}"
+                                class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
+                                <span
+                                    class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            @endif
+
             <!-- Owner Section -->
-            <div class="mb-4">
-                <p
-                    class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
-                    Pemilik
-                </p>
-                <ul class="space-y-1">
-                    <li>
-                        <a href="#"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-chart-line text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Ringkasan</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="riwayat-owner"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/pemilik/akun"
-                            class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
-                            <i class="fas fa-user-cog text-lg w-6 text-center text-teal-300"></i>
-                            <span
-                                class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Kelola
-                                Akun</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            @if ($isOwner)
+                <div class="mb-4">
+                    <p
+                        class="uppercase text-xs text-teal-200 mb-2 pl-1 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">
+                        Pemilik
+                    </p>
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{{ route('pemilik.ringkasan') }}"
+                                class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                <i class="fas fa-chart-line text-lg w-6 text-center text-teal-300"></i>
+                                <span
+                                    class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Ringkasan</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('riwayat.owner') }}"
+                                class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                <i class="fas fa-history text-lg w-6 text-center text-teal-300"></i>
+                                <span
+                                    class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Riwayat</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('pemilik.akun.index') }}"
+                                class="flex items-center gap-2 px-5 py-2 rounded hover:bg-teal-600 text-sm transition-colors duration-200">
+                                <i class="fas fa-user-cog text-lg w-6 text-center text-teal-300"></i>
+                                <span
+                                    class="lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity duration-300">Kelola
+                                    Akun</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            @endif
         </nav>
     </aside>
 

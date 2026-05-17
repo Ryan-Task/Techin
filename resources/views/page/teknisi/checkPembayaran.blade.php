@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
-@include('komponen.sidebar')
+<body class="bg-gray-50">
+    @include('komponen.sidebar')
 
-<body class="">
-
-    <div class="ml-32">
+    <main class="lg:ml-20 transition-all duration-300">
+        <div class="p-6">
         <h2 class="text-2xl font-bold mb-6">Cek Pembayaran Servis</h2>
 
         <!-- Tampilkan error jika ada -->
@@ -37,7 +37,8 @@
                 Lanjutkan
             </button>
         </form>
-    </div>
+        </div>
+    </main>
 </body>
 
 </html>
